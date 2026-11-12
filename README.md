@@ -9,4 +9,6 @@ Source for starfighterfitness.com, which runs from a short snippet in GoHighLeve
 | `macro-calculator.html` | The /macro-calculator page (calorie and macro calculator) |
 | `version.json` | `v` = home page (bumped by the build script), `macro` = calculator (bump by hand) |
 | `loader.js` | Called by the GHL snippet; loads the latest `embed.html` |
-| `GHL-SNIPPET.md` | What sits in GHL |
+| `seo-copy.html` | Crawlable text copy of the site (built by `tools/build_seo.py`) |
+| `ghl-snippet.html` | Exactly what goes in the GHL Custom Code element on the home page |
+| `GHL-SNIPPET.md` | What sits in GHL and when to re-paste it |

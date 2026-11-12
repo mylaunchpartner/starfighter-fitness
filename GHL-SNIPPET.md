@@ -1,13 +1,11 @@
 # GHL snippet: Starfighter Fitness (starfighterfitness.com)
 
-GHL: sub-account **Starfighter Fitness** → Sites → Funnels/Websites → Starfighter Fitness → Home → the one Custom HTML/Javascript element. It holds only this snippet:
+GHL: sub-account **Starfighter Fitness** → Sites → Funnels/Websites → Starfighter Fitness → Home → the one Custom HTML/Javascript element. It holds the contents of `ghl-snippet.html`:
 
-```html
-<div id="sf-fit-root" data-v="0"><noscript><p style="font-family:system-ui,sans-serif;font-size:15px;color:#6E7480;padding:24px;text-align:center;">Starfighter Fitness: online longevity coaching, nationwide. Call (928) 549-8006 or email info@starfighterfitness.com to book a strategy call.</p></noscript></div>
-<script src="https://mylaunchpartner.github.io/starfighter-fitness/loader.js" data-root="sf-fit-root"></script>
-```
+- a `<noscript>` copy of the page text and links (`seo-copy.html`), so search engines and AI crawlers that don't run JavaScript can read the whole page. Visitors never see it.
+- the loader, which pulls the live site (`embed.html`) from this repo.
 
-The site itself always loads from this repo (it runs in a sandboxed iframe, so there was never crawlable page text to keep in GHL).
+The site itself runs in a sandboxed iframe, so the crawlable copy has to live in GHL.
 
 ## Macro Calculator page (/macro-calculator)
 Same sub-account → Starfighter Fitness → **Macro Calculator** page → its one Custom HTML/Javascript element:
@@ -21,4 +19,5 @@ Edit `macro-calculator.html`, bump `macro` in `version.json`, commit.
 ## Making a change (home page)
 1. Edit `site.html` (the readable site).
 2. Run `python3 tools/build_embed.py`: it rebuilds the gzip payload in `embed.html` and bumps `version.json`.
-3. Commit. Live within ~5 minutes; no GHL re-paste needed (only re-paste if the noscript text changes).
+3. Run `python3 tools/build_seo.py` and rebuild `ghl-snippet.html` (wrap `seo-copy.html` as in the current file).
+4. Commit. Visitors get the change within ~5 minutes. If the text, headings, links or contact details changed, re-paste `ghl-snippet.html` into GHL and Publish so crawlers see it too.
