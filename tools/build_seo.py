@@ -7,7 +7,7 @@ root = pathlib.Path(__file__).resolve().parent.parent
 s = (root / "site.html").read_text()
 title = re.search(r"<title>(.*?)</title>", s, re.S).group(1).strip()
 body = re.search(r"<body[^>]*>(.*)</body>", s, re.S).group(1)
-for t in ["script", "style", "svg", "noscript", "template", "button"]:
+for t in ["script", "style", "svg", "noscript", "template", "button", "iframe"]:
     body = re.sub(r"<%s\b[\s\S]*?</%s>" % (t, t), "", body)
 body = re.sub(r"<!--[\s\S]*?-->", "", body)
 body = re.sub(r"<(input|img)\b[^>]*>", "", body)
