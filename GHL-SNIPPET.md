@@ -9,7 +9,16 @@ GHL: sub-account **Starfighter Fitness** → Sites → Funnels/Websites → Star
 
 The site itself always loads from this repo (it runs in a sandboxed iframe, so there was never crawlable page text to keep in GHL).
 
-## Making a change
+## Macro Calculator page (/macro-calculator)
+Same sub-account → Starfighter Fitness → **Macro Calculator** page → its one Custom HTML/Javascript element:
+
+```html
+<div id="sf-macro-root" data-v="0"></div>
+<script src="https://mylaunchpartner.github.io/starfighter-fitness/loader.js" data-root="sf-macro-root" data-file="macro-calculator.html" data-vkey="macro"></script>
+```
+Edit `macro-calculator.html`, bump `macro` in `version.json`, commit.
+
+## Making a change (home page)
 1. Edit `site.html` (the readable site).
 2. Run `python3 tools/build_embed.py`: it rebuilds the gzip payload in `embed.html` and bumps `version.json`.
 3. Commit. Live within ~5 minutes; no GHL re-paste needed (only re-paste if the noscript text changes).

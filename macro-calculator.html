@@ -1,0 +1,1298 @@
+
+<!--
+  ============================================================================
+  STARFIGHTER MACROS  —  embeddable calorie and macro calculator
+  Paste this entire block into a GoHighLevel "Custom JS/HTML" element.
+
+  Self-contained: no build step, no hosted files, no external JavaScript.
+  The only outside request is the Archivo webfont from Google Fonts.
+  Everything renders inside a shadow root, so your page's CSS cannot reach
+  into the calculator and the calculator's CSS cannot leak onto your page.
+
+  ONE THING TO EDIT: nothing. Your booking link is already wired in. To drop the
+  call to action, delete the <section class="cta"> block between the two
+  "EDIT ME" comments.
+  ============================================================================
+-->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap">
+
+<!-- the host element itself sits in your page's DOM, so it gets its own armour -->
+<style>
+  #starfighter-macros{
+    /* all:initial strips whatever the page builder puts on this element.
+       It also resets font-family to the browser default, and a document-level
+       rule outranks the shadow root's own :host rule -- so the family has to
+       be restated right here or everything inside renders in Times. */
+    all:initial !important;
+    display:block !important;
+    width:100% !important;
+    font-family:"Inter","Helvetica Neue",Helvetica,Arial,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif !important;
+    color:#10182B !important;
+    line-height:1.5 !important;
+    text-align:left !important;
+  }
+</style>
+
+<div id="starfighter-macros"></div>
+
+<script>
+
+(function(){
+  "use strict";
+
+  var ROOT = null;
+  var SFM_CSS = `
+  /* ============================================================
+     Starfighter Fitness — navy / off-white / red, Archivo.
+     Light = off-white ground. Dark = navy ground. Red stays scarce.
+     ============================================================ */
+  :host{
+    /* sampled from starfighterfitness.com: navy #10182B, off-white #F6F5F2,
+       red #E63946, muted #6E7480. --red is the site red, for navy grounds;
+       --red-ink is a darkened version that stays legible on off-white. */
+    --ground:#F6F5F2;
+    --panel:#FFFFFF;
+    --panel-2:#ECEAE5;
+    --navy:#10182B;
+    --ink:#10182B;
+    --ink-2:#3A4257;
+    --muted:#6E7480;
+    --line:#D5D2CA;
+    --line-2:#E5E2DB;
+    --red:#E63946;
+    --red-ink:#E63946;
+    --sel:#10182B;
+    --sel-ink:#F6F5F2;
+    --sel-line:#10182B;
+    --inv-ground:#10182B;
+    --inv-ink:#F6F5F2;
+    --inv-muted:#8A93A6;
+    --inv-line:#232D45;
+    --pro:#E63946;
+    --fat:#2B3A5E;
+    --carb:#9A9284;
+    --alert-bg:#FBE9EA;
+    --alert-line:#E7BFC3;
+  }
+
+  *{box-sizing:border-box}
+  /* author styles beat the UA rule for [hidden], so restate it explicitly:
+     .field{display:flex} was overriding hidden on the metric inputs. */
+  [hidden]{display:none !important}
+  :host{
+    display:block;
+    background:var(--ground);
+    color:var(--ink);
+    font-family:"Inter","Helvetica Neue",Helvetica,Arial,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    font-size:15px;
+    line-height:1.5;
+    font-variant-numeric:tabular-nums;
+    text-align:left;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,p,ul{margin:0}
+  button{margin:0}
+  /* The navy bars run edge to edge; their contents and the calculator body
+     stay in a centred column. --sfm-max is the one knob: change it to widen
+     or narrow that column. */
+  :host,:root{--sfm-max:1160px}
+  .wrap{max-width:none;margin:0;padding:0;width:100%}
+  .pagebody{
+    container:sfm / inline-size;
+    max-width:var(--sfm-max);
+    margin:0 auto;
+    padding-left:18px;
+    padding-right:18px;
+    padding-block:26px 30px;
+  }
+  .site-bar,.site-foot{
+    padding-inline:max(18px, calc((100% - var(--sfm-max)) / 2 + 18px));
+  }
+
+  /* ---------- typographic utilities ---------- */
+  .eyebrow{
+    font-size:10.5px;
+    font-weight:700;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color:var(--muted);
+  }
+  .cap{
+    font-size:10px;
+    font-weight:700;
+    letter-spacing:.15em;
+    text-transform:uppercase;
+    color:var(--muted);
+  }
+
+  /* ---------- site bar, matching starfighterfitness.com ---------- */
+  .site-bar{
+    background:var(--navy);
+    display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;
+    gap:14px 20px;padding-block:16px;
+  }
+  .brand{display:flex;align-items:center;gap:11px;text-decoration:none}
+  .brand-mark{
+    width:19px;height:19px;flex:0 0 auto;background:var(--red);
+    clip-path:polygon(26% 0,100% 0,74% 100%,0 100%);
+    position:relative;
+  }
+  .brand-mark::after{
+    content:"";position:absolute;left:38%;top:14%;width:2px;height:72%;
+    background:#F6F5F2;transform:skewX(-14deg);
+  }
+  .brand-name{
+    display:block;color:#F6F5F2;font-weight:800;font-size:15px;
+    letter-spacing:.02em;text-transform:uppercase;line-height:1;
+  }
+  .brand-sub{
+    display:block;color:var(--red);font-weight:700;font-size:9px;
+    letter-spacing:.3em;text-transform:uppercase;line-height:1;margin-top:4px;
+  }
+  .bar-cta{
+    display:inline-block;text-decoration:none;
+    background:var(--red);color:#FFFFFF;border:0;
+    font-size:10.5px;font-weight:800;letter-spacing:.15em;text-transform:uppercase;
+    padding:11px 17px;transition:opacity .1s linear;
+  }
+  .bar-cta:hover{opacity:.87}
+
+  /* ---------- title block ---------- */
+  header.top{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:flex-end;
+    justify-content:space-between;
+    gap:14px 24px;
+    border-bottom:3px solid var(--ink);
+    padding-bottom:12px;
+    margin-bottom:6px;
+  }
+  h1{
+    font-weight:900;
+    font-size:clamp(32px,6.2cqw,60px);
+    line-height:.86;
+    letter-spacing:-.035em;
+    text-transform:uppercase;
+    margin:6px 0 0;
+    text-wrap:balance;
+  }
+  .rule-red{height:4px;background:var(--red);width:96px;margin-bottom:16px}
+  .tagline{
+    color:var(--ink-2);
+    font-size:14px;
+    max-width:62ch;
+    margin:0 0 26px;
+  }
+
+  /* ---------- segmented control ---------- */
+  .seg{display:inline-flex;border:1.5px solid var(--ink);background:var(--panel)}
+  .seg button{
+    appearance:none;border:0;background:transparent;color:var(--ink);
+    font-family:inherit;font-size:10.5px;font-weight:700;
+    letter-spacing:.13em;text-transform:uppercase;
+    padding:8px 13px;cursor:pointer;
+    transition:background .1s linear,color .1s linear;
+  }
+  .seg button + button{border-left:1.5px solid var(--ink)}
+  .seg button:hover{background:var(--panel-2)}
+  .seg button[aria-checked="true"]{background:var(--sel);color:var(--sel-ink)}
+  button:focus-visible,input:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+
+  /* ---------- layout ---------- */
+  .grid{display:grid;grid-template-columns:minmax(0,1fr);gap:20px;align-items:start}
+  @container sfm (min-width:980px){
+    .grid{grid-template-columns:minmax(0,1fr) minmax(0,384px);gap:26px}
+    .readout-col{position:sticky;top:20px}
+  }
+
+  /* ---------- step blocks ---------- */
+  .steps{display:flex;flex-direction:column;gap:16px}
+  .step{background:var(--panel);border:1.5px solid var(--ink);padding:16px 16px 18px}
+  .step-head{
+    display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;
+    margin-bottom:14px;padding-bottom:9px;border-bottom:1.5px solid var(--ink);
+  }
+  .step-num{font-size:11px;font-weight:900;color:var(--red-ink);letter-spacing:.08em}
+  .step-title{
+    font-weight:900;font-size:18px;text-transform:uppercase;
+    letter-spacing:-.012em;margin:0;flex:1;line-height:1.1;
+  }
+  .step-note{font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+
+  /* ---------- inputs ---------- */
+  .fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(134px,1fr));gap:13px}
+  .field{display:flex;flex-direction:column;gap:6px;min-width:0}
+  input[type="number"]{
+    width:100%;font-family:inherit;font-variant-numeric:tabular-nums;
+    font-size:18px;font-weight:700;color:var(--ink);
+    background:var(--ground);border:1.5px solid var(--line);border-radius:0;
+    padding:8px 10px;
+  }
+  input[type="number"]:hover{border-color:var(--ink-2)}
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button{opacity:.3}
+  .ht-pair{display:flex;gap:8px}
+  .ht-pair .field{flex:1}
+  .seed-note{font-size:10.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin:11px 0 0}
+  .seed-note.off{display:none}
+
+  /* ---------- option cards ---------- */
+  .opts{display:flex;flex-wrap:wrap;gap:7px}
+  .opts.act .opt{flex:1 1 170px}
+  .opts.rate .opt{flex:1 1 132px}
+  .opts.prot .opt{flex:1 1 152px}
+  .opts.fat .opt{flex:1 1 132px}
+  .opt{
+    appearance:none;text-align:left;font-family:inherit;color:var(--ink);
+    background:var(--ground);border:1.5px solid var(--line);border-radius:0;
+    padding:9px 10px 8px;cursor:pointer;
+    display:flex;flex-direction:column;gap:2px;
+    transition:background .1s linear,border-color .1s linear,color .1s linear;
+  }
+  .opt:hover{border-color:var(--ink)}
+  .opt .o-label{font-weight:800;font-size:14.5px;letter-spacing:-.012em;text-transform:uppercase;line-height:1.15}
+  .opt .o-sub{font-size:11px;font-weight:500;color:var(--muted);line-height:1.25}
+  .opt .o-out{
+    font-size:12px;font-weight:700;color:var(--ink-2);
+    margin-top:4px;padding-top:5px;border-top:1.5px solid var(--line-2);
+    font-variant-numeric:tabular-nums;
+  }
+  .opt[aria-checked="true"]{background:var(--sel);border-color:var(--sel-line);color:var(--sel-ink)}
+  .opt[aria-checked="true"] .o-sub,
+  .opt[aria-checked="true"] .o-out{color:var(--sel-ink);opacity:.72}
+  .opt[aria-checked="true"] .o-out{border-top-color:currentColor;opacity:.72}
+
+  /* ---------- readout ---------- */
+  .readout{border:1.5px solid var(--ink);background:var(--panel)}
+  .ro-head{background:var(--inv-ground);color:var(--inv-ink);padding:16px 17px 15px}
+  .ro-kcal{
+    font-weight:900;font-size:64px;line-height:.84;letter-spacing:-.045em;
+    display:block;font-variant-numeric:tabular-nums;
+  }
+  .ro-kcal-unit{
+    font-size:10px;font-weight:700;letter-spacing:.19em;text-transform:uppercase;
+    color:var(--inv-muted);margin-top:9px;
+  }
+  .ro-head .bar-red{height:3px;background:var(--red);width:64px;margin-top:12px}
+
+  .chain{display:flex;flex-direction:column;border-bottom:1.5px solid var(--ink)}
+  .chain-row{
+    display:flex;justify-content:space-between;align-items:baseline;gap:12px;
+    padding:7px 17px;font-size:12px;font-weight:600;font-variant-numeric:tabular-nums;
+  }
+  .chain-row + .chain-row{border-top:1px solid var(--line-2)}
+  .chain-row .k{color:var(--muted);letter-spacing:.11em;text-transform:uppercase;font-size:10px;font-weight:700}
+  .chain-row .v{font-weight:700}
+  .chain-row.accent .v{color:var(--red-ink)}
+
+  .bar{display:flex;height:14px;margin:15px 17px 7px;background:var(--panel-2)}
+  .bar span{display:block;height:100%}
+
+  .macros{display:flex;flex-direction:column;padding:0 17px 3px}
+  .macro{
+    display:grid;grid-template-columns:12px 1fr auto;
+    align-items:baseline;gap:10px;
+    padding:10px 0;border-bottom:1px solid var(--line-2);
+  }
+  .macro:last-child{border-bottom:0}
+  .swatch{width:11px;height:11px;align-self:center}
+  .m-name{font-weight:900;font-size:15px;text-transform:uppercase;letter-spacing:-.01em;line-height:1.1}
+  .m-name small{
+    display:block;font-size:10px;font-weight:600;letter-spacing:.07em;
+    color:var(--muted);text-transform:uppercase;margin-top:3px;
+  }
+  .m-right{text-align:right}
+  .m-g{font-size:21px;font-weight:900;font-variant-numeric:tabular-nums;letter-spacing:-.02em;display:block}
+  .m-g em{font-style:normal;font-size:11px;font-weight:700;color:var(--muted);margin-left:2px}
+  .m-kcal{font-size:10.5px;font-weight:600;color:var(--muted);font-variant-numeric:tabular-nums;letter-spacing:.04em;display:block;margin-top:2px}
+
+  .alert{
+    display:none;margin:0 17px 15px;padding:10px 11px;
+    background:var(--alert-bg);border:1.5px solid var(--alert-line);border-left:4px solid var(--red);
+    font-size:12.5px;line-height:1.4;color:var(--ink);
+  }
+  .alert.on{display:block}
+  .alert strong{
+    font-size:9.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--red-ink);display:block;margin-bottom:4px;
+  }
+
+  /* ---------- arithmetic + notes ---------- */
+  section.math,section.notes{
+    margin-top:20px;background:var(--panel);border:1.5px solid var(--ink);padding:18px 18px 20px;
+  }
+  section.math h2,section.notes h2{
+    font-weight:900;font-size:19px;text-transform:uppercase;letter-spacing:-.014em;margin:0 0 4px;
+  }
+  .sub{font-size:13px;color:var(--muted);margin:0 0 16px;font-weight:500}
+  .eq-list{display:flex;flex-wrap:wrap;gap:15px}
+  .eq{flex:1 1 420px;min-width:0;border-left:3px solid var(--red);padding-left:12px}
+  .eq .eq-name{font-size:9.5px;font-weight:800;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+  .eq .eq-body{
+    font-size:13px;font-weight:500;line-height:1.7;color:var(--ink-2);
+    font-variant-numeric:tabular-nums;white-space:normal;padding-bottom:2px;
+  }
+  .eq .eq-body b{color:var(--ink);font-weight:800}
+
+  section.notes ul{margin:0;padding-left:17px}
+  section.notes li{font-size:13.5px;color:var(--ink-2);font-weight:500;margin-bottom:9px;break-inside:avoid}
+  @container sfm (min-width:980px){
+    section.notes ul{column-count:2;column-gap:36px}
+  }
+  section.notes li b{color:var(--ink);font-weight:800}
+  .cite{
+    margin-top:16px;padding-top:12px;border-top:1.5px solid var(--line-2);
+    font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.02em;max-width:74ch;
+  }
+
+  /* ---------- site footer, matching starfighterfitness.com ---------- */
+  .site-foot{background:var(--navy);color:var(--inv-ink);padding-block:30px 20px}
+  .foot-top{display:flex;flex-wrap:wrap;gap:26px 40px;margin-bottom:26px}
+  .foot-brand{flex:1 1 300px;max-width:440px;min-width:0}
+  .foot-brand p{
+    color:#C4CBDA;font-size:13.5px;font-weight:400;line-height:1.6;
+    margin-top:15px;max-width:42ch;
+  }
+  .foot-col{flex:0 1 180px;min-width:0;display:flex;flex-direction:column;gap:11px}
+  .foot-h{
+    color:var(--red);font-size:9.5px;font-weight:800;
+    letter-spacing:.19em;text-transform:uppercase;margin-bottom:3px;
+  }
+  .foot-col a{color:#D6DBE5;text-decoration:none;font-size:13.5px;font-weight:400}
+  .foot-col a:hover{color:#FFFFFF;text-decoration:underline}
+  .foot-legal{
+    color:#727C90;font-size:11.5px;font-weight:400;line-height:1.62;
+    border-top:1px solid #222C44;padding-top:18px;max-width:96ch;
+  }
+  .foot-bar{
+    display:flex;flex-wrap:wrap;gap:8px 34px;margin-top:20px;padding-top:16px;
+    border-top:1px solid #222C44;
+    color:#5F6879;font-size:9.5px;font-weight:700;letter-spacing:.17em;text-transform:uppercase;
+  }
+
+  /* ---------- save ---------- */
+  .save-wrap{padding:0 17px 16px}
+  .save-btn{
+    width:100%;appearance:none;font-family:inherit;cursor:pointer;
+    background:var(--sel);color:var(--sel-ink);border:1.5px solid var(--sel-line);border-radius:0;
+    font-size:11.5px;font-weight:800;letter-spacing:.15em;text-transform:uppercase;
+    padding:12px 10px;transition:opacity .1s linear;
+  }
+  .save-btn:hover{opacity:.86}
+  .save-btn[disabled]{cursor:default;opacity:.55}
+  .save-note{
+    font-size:10.5px;font-weight:600;letter-spacing:.06em;color:var(--muted);
+    margin:8px 0 0;text-align:center;
+  }
+  .save-note.warn{color:var(--red-ink)}
+
+  @media (prefers-reduced-motion: reduce){*{transition:none !important}}
+
+  /* ---------- call to action ---------- */
+  section.cta{
+    margin-top:20px;background:var(--inv-ground);color:var(--inv-ink);
+    border:1.5px solid var(--ink);padding:22px 20px;
+    display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:18px 26px;
+  }
+  section.cta .cta-txt{flex:1 1 380px;min-width:0}
+  section.cta .cta-eyebrow{
+    font-size:9.5px;font-weight:800;letter-spacing:.19em;text-transform:uppercase;
+    color:var(--inv-muted);margin-bottom:9px;
+  }
+  section.cta h2{
+    font-weight:900;font-size:26px;text-transform:uppercase;
+    letter-spacing:-.025em;line-height:1;margin:0;color:var(--inv-ink);
+  }
+  section.cta .cta-copy{
+    font-size:13.5px;font-weight:500;color:var(--inv-muted);
+    max-width:58ch;margin-top:11px;line-height:1.55;
+  }
+  .cta-btn{
+    display:inline-block;text-decoration:none;flex:0 0 auto;
+    background:var(--red);color:#F4F2ED;border:1.5px solid var(--red);
+    font-size:11.5px;font-weight:800;letter-spacing:.15em;text-transform:uppercase;
+    padding:14px 22px;transition:opacity .1s linear;
+  }
+  .cta-btn:hover{opacity:.87}
+  .cta-btn:focus-visible{outline:2px solid var(--inv-ink);outline-offset:3px}
+
+  /* The page builder puts this in a fixed-width column. Break out of it so
+     the navy bars span the window; the content column stays capped. */
+  .wrap{
+    /* width:auto is load-bearing: with a fixed width the negative margins
+       only shift the box, they do not widen it. */
+    width:auto;
+    max-width:none;
+    margin-left:var(--sfm-bleed-l, 0px);
+    margin-right:var(--sfm-bleed-r, 0px);
+  }
+
+  /* container queries drive the layout; this covers browsers without them */
+  @supports not (container-type: inline-size){
+    @media (min-width:1180px){
+      .grid{grid-template-columns:minmax(0,1fr) minmax(0,384px);gap:26px}
+      .readout-col{position:sticky;top:20px}
+      section.notes ul{column-count:2;column-gap:36px}
+    }
+  }
+`;
+  var SFM_HTML = `<div class="wrap">
+
+  <!-- EDIT ME: the two links in this bar -->
+  <header class="site-bar">
+    <a class="brand" href="https://starfighterfitness.com">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span>
+        <span class="brand-name">Starfighter</span>
+        <span class="brand-sub">Fitness</span>
+      </span>
+    </a>
+    <a class="bar-cta" href="https://api.leadconnectorhq.com/widget/bookings/fit-call-starfighter-fitness">Book a call &rarr;</a>
+  </header>
+
+  <div class="pagebody">
+
+  <header class="top">
+    <div>
+      <div class="eyebrow">Macro calculator</div>
+      <h1>Starfighter Macros</h1>
+    </div>
+    <div class="seg" role="radiogroup" aria-label="Units" id="units">
+      <button type="button" role="radio" id="u-imp" data-units="imperial" aria-checked="true">lb / ft&middot;in</button>
+      <button type="button" role="radio" id="u-met" data-units="metric" aria-checked="false">kg / cm</button>
+    </div>
+  </header>
+  <div class="rule-red"></div>
+  <p class="tagline">Mifflin&#8211;St Jeor to BMR. Activity factor to TDEE. Then the split: protein by bodyweight, fat as a share of intake, carbohydrate on whatever is left. Every figure recalculates as you click.</p>
+
+  <div class="grid">
+
+    <!-- ============ INPUTS ============ -->
+    <div class="steps">
+
+      <section class="step">
+        <div class="step-head">
+          <span class="step-num">01</span>
+          <h2 class="step-title">Your numbers</h2>
+          <span class="step-note">Mifflin&#8211;St Jeor inputs</span>
+        </div>
+
+        <div class="fields">
+          <div class="field">
+            <span class="cap">Sex</span>
+            <div class="seg" role="radiogroup" aria-label="Sex" id="sex" style="width:100%">
+              <button type="button" role="radio" id="sex-f" data-sex="female" aria-checked="true" style="flex:1">Female</button>
+              <button type="button" role="radio" id="sex-m" data-sex="male" aria-checked="false" style="flex:1">Male</button>
+            </div>
+          </div>
+          <div class="field">
+            <label class="cap" for="age">Age &middot; years</label>
+            <input type="number" id="age" min="14" max="99" step="1" value="38">
+          </div>
+          <div class="field" id="wrap-lb">
+            <label class="cap" for="lb">Weight &middot; lb</label>
+            <input type="number" id="lb" min="60" max="600" step="1" value="165">
+          </div>
+          <div class="field" id="wrap-kg" hidden>
+            <label class="cap" for="kg">Weight &middot; kg</label>
+            <input type="number" id="kg" min="30" max="275" step="0.5" value="74.8">
+          </div>
+          <div class="field" id="wrap-ftin">
+            <span class="cap">Height &middot; ft &amp; in</span>
+            <div class="ht-pair">
+              <div class="field"><input type="number" id="ft" min="3" max="7" step="1" value="5" aria-label="Height feet"></div>
+              <div class="field"><input type="number" id="inch" min="0" max="11" step="1" value="6" aria-label="Height inches"></div>
+            </div>
+          </div>
+          <div class="field" id="wrap-cm" hidden>
+            <label class="cap" for="cm">Height &middot; cm</label>
+            <input type="number" id="cm" min="120" max="230" step="1" value="168">
+          </div>
+        </div>
+        <p class="seed-note" id="seedNote">Example values loaded &mdash; overwrite with your own</p>
+      </section>
+
+      <section class="step">
+        <div class="step-head">
+          <span class="step-num">02</span>
+          <h2 class="step-title">Activity factor</h2>
+          <span class="step-note">BMR &times; factor = TDEE</span>
+        </div>
+        <div class="opts act" role="radiogroup" aria-label="Activity factor" id="act"></div>
+      </section>
+
+      <section class="step">
+        <div class="step-head">
+          <span class="step-num">03</span>
+          <h2 class="step-title">Rate of change</h2>
+          <span class="step-note">3,500 kcal &asymp; 1 lb</span>
+        </div>
+        <div class="opts rate" role="radiogroup" aria-label="Weekly rate of weight change" id="rate"></div>
+      </section>
+
+      <section class="step">
+        <div class="step-head">
+          <span class="step-num">04</span>
+          <h2 class="step-title">Protein target</h2>
+          <span class="step-note">grams per lb bodyweight</span>
+        </div>
+        <div class="opts prot" role="radiogroup" aria-label="Protein target" id="prot"></div>
+      </section>
+
+      <section class="step">
+        <div class="step-head">
+          <span class="step-num">05</span>
+          <h2 class="step-title">Fat share</h2>
+          <span class="step-note">percent of intake &middot; carbs take the rest</span>
+        </div>
+        <div class="opts fat" role="radiogroup" aria-label="Fat share of intake" id="fat"></div>
+      </section>
+    </div>
+
+    <!-- ============ READOUT ============ -->
+    <div class="readout-col">
+      <div class="readout">
+        <div class="ro-head">
+          <span class="ro-kcal" id="ro-kcal">1,740</span>
+          <div class="ro-kcal-unit">kcal &middot; daily intake target</div>
+          <div class="bar-red"></div>
+        </div>
+
+        <div class="chain">
+          <div class="chain-row"><span class="k">BMR</span><span class="v" id="ro-bmr">&mdash;</span></div>
+          <div class="chain-row"><span class="k">Activity <span id="ro-actf"></span></span><span class="v" id="ro-tdee">&mdash;</span></div>
+          <div class="chain-row accent"><span class="k" id="ro-adj-k">Deficit</span><span class="v" id="ro-def">&mdash;</span></div>
+        </div>
+
+        <div class="bar" id="bar" role="img" aria-label="Macronutrient split by calories">
+          <span id="bar-pro" style="background:var(--pro)"></span>
+          <span id="bar-fat" style="background:var(--fat)"></span>
+          <span id="bar-carb" style="background:var(--carb)"></span>
+        </div>
+
+        <div class="macros">
+          <div class="macro">
+            <span class="swatch" style="background:var(--pro)"></span>
+            <span class="m-name">Protein<small id="m-pro-rule">1.0 g/lb</small></span>
+            <span class="m-right"><span class="m-g" id="m-pro-g">&mdash;<em>g</em></span><span class="m-kcal" id="m-pro-k">&mdash;</span></span>
+          </div>
+          <div class="macro">
+            <span class="swatch" style="background:var(--fat)"></span>
+            <span class="m-name">Fat<small id="m-fat-rule">30% of intake</small></span>
+            <span class="m-right"><span class="m-g" id="m-fat-g">&mdash;<em>g</em></span><span class="m-kcal" id="m-fat-k">&mdash;</span></span>
+          </div>
+          <div class="macro">
+            <span class="swatch" style="background:var(--carb)"></span>
+            <span class="m-name">Carbs<small>the remainder</small></span>
+            <span class="m-right"><span class="m-g" id="m-carb-g">&mdash;<em>g</em></span><span class="m-kcal" id="m-carb-k">&mdash;</span></span>
+          </div>
+        </div>
+
+        <div class="alert" id="alert"><strong>Check this</strong><span id="alert-text"></span></div>
+
+        <div class="save-wrap" id="saveWrap" hidden>
+          <button type="button" class="save-btn" id="saveBtn">Save these numbers as PDF</button>
+          <p class="save-note" id="saveNote" hidden></p>
+        </div>
+      </div>
+      <p class="seed-note" style="text-align:right">Assumes a steady adjustment, seven days a week</p>
+    </div>
+
+  </div><!-- /.grid -->
+
+  <section class="math">
+    <h2>The arithmetic, with your numbers in it</h2>
+    <p class="sub">Every figure on this page comes from these five lines.</p>
+    <div class="eq-list" id="eqs"></div>
+  </section>
+
+  <section class="notes">
+    <h2>What this number is and is not</h2>
+    <ul>
+      <li><b>Mifflin&#8211;St Jeor is a population-level equation.</b> Individual resting metabolic rate varies roughly &plusmn;10&ndash;15% from its prediction, and activity factors are coarser still. Treat the output as a starting point to test against real data, not a measurement of you.</li>
+      <li><b>Atwater factors</b>: protein 4 kcal/g, carbohydrate 4 kcal/g, fat 9 kcal/g.</li>
+      <li><b>3,500 kcal per pound</b> is a rule of thumb that drifts over long timelines, because expenditure falls as bodyweight falls and rises as it rises. Recalculate every 10&ndash;15 lb in either direction.</li>
+      <li><b>Protein by total bodyweight</b> runs high at higher body-fat percentages. At 1.0 g/lb, lean body mass is the better denominator when a DEXA or InBody number exists.</li>
+      <li><b>Fat below 20% of intake</b> begins to interfere with sex-hormone production and the absorption of fat-soluble vitamins. The 20% setting is the usual floor, not a target to sit under.</li>
+      <li><b>Gaining above roughly 0.5 lb per week</b> adds a rising share of fat rather than lean tissue for anyone past their first year of training. The slower settings are there for a reason.</li>
+      <li><b>Scale weight is the input here, not the outcome.</b> Waist circumference, strength progression and how training actually feels carry more signal on a longevity plan than the number this equation is built from.</li>
+      <li><b>Nonclinical.</b> This is a planning calculator for training and nutrition, not medical advice, and it does not account for medication, pregnancy, or any diagnosed metabolic condition.</li>
+    </ul>
+    <p class="cite">Source on the frame: Mifflin MD, St Jeor ST, Hill LA, Scott BJ, Daugherty SA, Koh YO. &ldquo;A new predictive equation for resting energy expenditure in healthy individuals.&rdquo; <i>Am J Clin Nutr</i> 1990;51(2):241&ndash;247. Population-level.</p>
+  </section>
+
+
+  <!-- ===== EDIT ME: point href at your booking page, or delete this whole section ===== -->
+  <section class="cta">
+    <div class="cta-txt">
+      <div class="cta-eyebrow">Next step</div>
+      <h2>A number is not a plan</h2>
+      <p class="cta-copy">This equation gives you somewhere to start. It cannot tell you whether that target fits the training week you actually have, what to hold steady when week six looks nothing like week two, or which measurements are worth watching. That part is a conversation.</p>
+    </div>
+    <a class="cta-btn" href="https://api.leadconnectorhq.com/widget/bookings/fit-call-starfighter-fitness">Book a call</a>
+  </section>
+  <!-- ===== end editable section ===== -->
+
+  </div><!-- /.pagebody -->
+
+  <!-- EDIT ME: footer links point at your real pages -->
+  <footer class="site-foot">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <a class="brand" href="https://starfighterfitness.com">
+          <span class="brand-mark" aria-hidden="true"></span>
+          <span>
+            <span class="brand-name">Starfighter</span>
+            <span class="brand-sub">Fitness</span>
+          </span>
+        </a>
+        <p>Online longevity coaching, delivered nationwide. We train people to be functional, strong, and independent into their hundreds &mdash; starting with the next ninety days.</p>
+      </div>
+      <nav class="foot-col">
+        <div class="foot-h">The program</div>
+        <a href="https://starfighterfitness.com">The healthspan gap</a>
+        <a href="https://starfighterfitness.com">The 90-day protocol</a>
+        <a href="https://starfighterfitness.com">Training tracks</a>
+        <a href="https://starfighterfitness.com">Pricing</a>
+      </nav>
+      <nav class="foot-col">
+        <div class="foot-h">Get started</div>
+        <a href="https://api.leadconnectorhq.com/widget/bookings/fit-call-starfighter-fitness">Book a strategy call</a>
+        <a href="mailto:info@starfighterfitness.com">info@starfighterfitness.com</a>
+      </nav>
+    </div>
+    <p class="foot-legal">Starfighter Fitness provides nonclinical fitness and nutrition coaching. This calculator is a planning estimate, not medical advice, diagnosis or treatment, and no individual result is promised. Consult a physician before beginning any exercise or nutrition program. The Mifflin&#8211;St Jeor equation it runs is a population-level prediction: individual resting metabolic rate varies roughly &plusmn;10&ndash;15% from it. Recheck your own numbers against real weight and performance data every two to three weeks.</p>
+    <div class="foot-bar">
+      <span>&copy; 2026 Starfighter Fitness LLC</span>
+      <span>A Starfighter Industries company</span>
+      <span>Coaching all 50 states</span>
+    </div>
+  </footer>
+</div>`;
+
+
+  var LB_PER_KG = 2.2046226218;
+  var KCAL_PER_LB = 3500;
+
+  var ACTIVITY = [
+    {v:1.2,   label:"Sedentary",   sub:"Desk work, little or no training"},
+    {v:1.375, label:"Light",       sub:"Training 1–3 days/week"},
+    {v:1.55,  label:"Moderate",    sub:"Training 3–5 days/week"},
+    {v:1.725, label:"Very active", sub:"Training 6–7 days/week"},
+    {v:1.9,   label:"Athlete",     sub:"Twice daily or physical job"}
+  ];
+
+  /* rate is POUNDS LOST per week; negative values are a surplus. */
+  var RATES = [
+    {v:2.0,   label:"−2.0 lb/wk", sub:"Very aggressive cut"},
+    {v:1.5,   label:"−1.5 lb/wk", sub:"Aggressive cut"},
+    {v:1.0,   label:"−1.0 lb/wk", sub:"Standard cut"},
+    {v:0.5,   label:"−0.5 lb/wk", sub:"Conservative cut"},
+    {v:0,     label:"Maintain",   sub:"No adjustment"},
+    {v:-0.25, label:"+0.25 lb/wk", sub:"Lean gain"},
+    {v:-0.5,  label:"+0.5 lb/wk",  sub:"Faster gain"},
+    {v:-1.0,  label:"+1.0 lb/wk",  sub:"Hard bulk"}
+  ];
+
+  var PROTEIN = [
+    {v:0.5, label:"0.5 g/lb", sub:"Maintenance floor"},
+    {v:0.7, label:"0.7 g/lb", sub:"Active, mid-range"},
+    {v:1.0, label:"1.0 g/lb", sub:"Deficit / lean mass"}
+  ];
+
+  var FATS = [
+    {v:0.20, label:"20%", sub:"Low — the usual floor"},
+    {v:0.25, label:"25%", sub:"Carb-forward"},
+    {v:0.30, label:"30%", sub:"Balanced"},
+    {v:0.35, label:"35%", sub:"Fat-forward"}
+  ];
+
+  var S = {
+    units:"imperial", sex:"female", age:38,
+    weightLb:165, heightIn:66,
+    act:1.55, rate:1.0, ppl:1.0, fatPct:0.30, touched:false
+  };
+
+  function $(id){ return ROOT.getElementById(id); }
+  function num(n){ return Math.round(n).toLocaleString("en-US"); }
+  function one(n){
+    return (Math.round(n*100)/100).toLocaleString("en-US",{minimumFractionDigits:1,maximumFractionDigits:2});
+  }
+  function cardId(prefix,v){ return prefix + "-" + String(v).replace(".","p").replace("-","n"); }
+
+  /* ---------- model ---------- */
+  function compute(pplOverride, rateOverride, actOverride, fatOverride){
+    var ppl  = pplOverride  == null ? S.ppl    : pplOverride;
+    var rate = rateOverride == null ? S.rate   : rateOverride;
+    var act  = actOverride  == null ? S.act    : actOverride;
+    var fatP = fatOverride  == null ? S.fatPct : fatOverride;
+
+    var kg = S.weightLb / LB_PER_KG;
+    var cm = S.heightIn * 2.54;
+
+    var bmr = (10*kg) + (6.25*cm) - (5*S.age) + (S.sex === "male" ? 5 : -161);
+    var tdee = bmr * act;
+    var adjust = rate * KCAL_PER_LB / 7;   // positive = deficit, negative = surplus
+    var target = tdee - adjust;
+
+    var proG = S.weightLb * ppl;
+    var proK = proG * 4;
+    var fatK = target * fatP;
+    var fatG = fatK / 9;
+    var carbK = target - proK - fatK;
+    var carbG = carbK / 4;
+
+    return {kg:kg, cm:cm, bmr:bmr, tdee:tdee, act:act, rate:rate, ppl:ppl, fatP:fatP,
+            adjust:adjust, target:target,
+            proG:proG, proK:proK, fatG:fatG, fatK:fatK, carbG:carbG, carbK:carbK};
+  }
+
+  /* ---------- option cards ---------- */
+  function buildCards(hostId, items, key){
+    var host = $(hostId);
+    host.innerHTML = "";
+    items.forEach(function(it){
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "opt";
+      b.setAttribute("role","radio");
+      b.id = cardId(hostId, it.v);
+      b.dataset.val = it.v;
+      b.innerHTML = '<span class="o-label"></span><span class="o-sub"></span><span class="o-out"></span>';
+      b.querySelector(".o-label").textContent = it.label;
+      b.querySelector(".o-sub").textContent = it.sub;
+      b.addEventListener("click", function(){
+        S[key] = parseFloat(b.dataset.val);
+        S.touched = true;
+        render(); save();
+      });
+      host.appendChild(b);
+    });
+  }
+
+  /* ---------- render ---------- */
+  function render(){
+    var r = compute();
+    var gaining = r.rate < 0;
+
+    $("ro-kcal").textContent = num(r.target);
+    $("ro-bmr").textContent  = num(r.bmr) + " kcal";
+    $("ro-actf").textContent = "×" + r.act;
+    $("ro-tdee").textContent = num(r.tdee) + " kcal";
+    $("ro-adj-k").textContent = r.adjust === 0 ? "No adjustment" : (gaining ? "Surplus" : "Deficit");
+    $("ro-def").textContent = r.adjust === 0
+      ? "0 kcal"
+      : (gaining ? "+" : "−") + num(Math.abs(r.adjust)) + " kcal";
+
+    var carbG = Math.max(0, r.carbG), carbK = Math.max(0, r.carbK);
+    $("m-pro-rule").textContent = one(r.ppl) + " g/lb · " + one(r.ppl*LB_PER_KG) + " g/kg";
+    $("m-fat-rule").textContent = Math.round(r.fatP*100) + "% of intake";
+    $("m-pro-g").innerHTML  = num(r.proG)  + '<em>g</em>';
+    $("m-fat-g").innerHTML  = num(r.fatG)  + '<em>g</em>';
+    $("m-carb-g").innerHTML = num(carbG)   + '<em>g</em>';
+
+    var tot = r.target > 0 ? r.target : 1;
+    $("m-pro-k").textContent  = num(r.proK) + " kcal · " + Math.round(r.proK/tot*100) + "%";
+    $("m-fat-k").textContent  = num(r.fatK) + " kcal · " + Math.round(r.fatK/tot*100) + "%";
+    $("m-carb-k").textContent = num(carbK)  + " kcal · " + Math.round(carbK/tot*100) + "%";
+
+    var sum = r.proK + r.fatK + carbK; if(sum <= 0) sum = 1;
+    $("bar-pro").style.width  = (r.proK/sum*100) + "%";
+    $("bar-fat").style.width  = (r.fatK/sum*100) + "%";
+    $("bar-carb").style.width = (carbK/sum*100) + "%";
+    $("bar").setAttribute("aria-label",
+      "Split by calories: protein " + Math.round(r.proK/sum*100) + "%, fat " +
+      Math.round(r.fatK/sum*100) + "%, carbohydrate " + Math.round(carbK/sum*100) + "%");
+
+    /* --- advisories, most severe first --- */
+    var floor = S.sex === "male" ? 1500 : 1200;
+    var msg = "";
+    if(r.carbK < 0){
+      msg = "At " + one(r.ppl) + " g/lb protein plus " + Math.round(r.fatP*100) + "% fat there is nothing left for carbohydrate — the two together exceed a " +
+            num(r.target) + " kcal target by " + num(-r.carbK) + " kcal. Ease the rate, or drop protein a step.";
+    } else if(!gaining && r.target < floor){
+      msg = "A " + num(r.target) + " kcal target sits below the " + num(floor) +
+            " kcal figure generally treated as a floor for " + (S.sex === "male" ? "men" : "women") +
+            " without supervision. Take a slower rate.";
+    } else if(gaining && Math.abs(r.rate) >= 1.0){
+      msg = "A " + num(Math.abs(r.adjust)) + " kcal surplus adds close to a pound a week, and past the first year of training most of that arrives as fat. Worth reserving for a deliberate, short block.";
+    } else if(gaining && Math.abs(r.rate) > 0.25){
+      msg = "Above roughly 0.25 lb per week, the share of the gain that is lean tissue starts to fall. Check waist and strength together, not weight alone.";
+    } else if(carbK < 200){
+      msg = "Only " + num(carbG) + " g of carbohydrate is left after protein and fat. Workable for a short cut, but it will show up in training quality if you are lifting or running hard.";
+    } else if(r.fatP <= 0.20 && r.fatG < 45){
+      msg = "At 20% of a " + num(r.target) + " kcal target, fat lands at " + num(r.fatG) +
+            " g. That is near the low end for sex-hormone production and fat-soluble vitamin absorption — worth holding only for a short block.";
+    } else if(!gaining && r.target < r.bmr){
+      msg = "This target is below the estimated BMR of " + num(r.bmr) +
+            " kcal. Reasonable inside a defined block, worth pairing with regular check-ins.";
+    }
+    $("alert").className = msg ? "alert on" : "alert";
+    $("alert-text").textContent = msg;
+
+    /* --- live preview on every card --- */
+    ACTIVITY.forEach(function(it){
+      var b = $(cardId("act", it.v)); if(!b) return;
+      b.setAttribute("aria-checked", it.v === S.act ? "true" : "false");
+      b.querySelector(".o-out").textContent = "TDEE " + num(compute(null,null,it.v,null).tdee) + " kcal";
+    });
+    RATES.forEach(function(it){
+      var b = $(cardId("rate", it.v)); if(!b) return;
+      var rr = compute(null, it.v, null, null);
+      b.setAttribute("aria-checked", it.v === S.rate ? "true" : "false");
+      b.querySelector(".o-out").textContent =
+        (it.v === 0 ? "" : (it.v < 0 ? "+" : "−") + num(Math.abs(rr.adjust)) + " → ") + num(rr.target) + " kcal";
+    });
+    PROTEIN.forEach(function(it){
+      var b = $(cardId("prot", it.v)); if(!b) return;
+      var rr = compute(it.v, null, null, null);
+      b.setAttribute("aria-checked", it.v === S.ppl ? "true" : "false");
+      b.querySelector(".o-out").textContent =
+        num(rr.proG) + " g pro · " + num(Math.max(0, rr.carbG)) + " g carb";
+    });
+    FATS.forEach(function(it){
+      var b = $(cardId("fat", it.v)); if(!b) return;
+      var rr = compute(null, null, null, it.v);
+      b.setAttribute("aria-checked", it.v === S.fatPct ? "true" : "false");
+      b.querySelector(".o-out").textContent =
+        num(rr.fatG) + " g fat · " + num(Math.max(0, rr.carbG)) + " g carb";
+    });
+
+    renderMath(r, gaining);
+    $("seedNote").className = S.touched ? "seed-note off" : "seed-note";
+  }
+
+  /* ---------- printed equations ---------- */
+  function renderMath(r, gaining){
+    var sexTerm = S.sex === "male" ? "+ 5" : "− 161";
+    var adjAbs = Math.abs(r.adjust);
+    var adjWord = r.adjust === 0 ? "Adjustment" : (gaining ? "Surplus" : "Deficit");
+    var lbPerWk = Math.abs(r.rate);
+
+    var rows = [
+      ["01 · Basal metabolic rate — Mifflin–St Jeor",
+       "BMR = (10 × kg) + (6.25 × cm) − (5 × age) " + sexTerm + "<br>" +
+       "&nbsp;&nbsp;&nbsp;&nbsp;= (10 × " + one(r.kg) + ") + (6.25 × " + one(r.cm) + ") − (5 × " + S.age + ") " +
+       sexTerm + " = <b>" + num(r.bmr) + " kcal</b>"],
+
+      ["02 · Total daily energy expenditure",
+       "TDEE = BMR × activity factor<br>" +
+       "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= " + num(r.bmr) + " × " + r.act + " = <b>" + num(r.tdee) + " kcal</b>"],
+
+      ["03 · " + adjWord + " and intake target",
+       adjWord + " = (" + one(lbPerWk) + " lb/wk × 3,500) ÷ 7 = " + num(adjAbs) + " kcal/day<br>" +
+       "Target = TDEE " + (r.adjust === 0 ? "" : (gaining ? "+ " : "− ") + num(adjAbs)) +
+       " = <b>" + num(r.target) + " kcal</b>"],
+
+      ["04 · Protein and fat come off the top",
+       "Protein = lb × " + one(r.ppl) + " = " + num(S.weightLb) + " × " + one(r.ppl) +
+       " = <b>" + num(r.proG) + " g</b> (" + num(r.proK) + " kcal)<br>" +
+       "Fat = (target × " + r.fatP.toFixed(2) + ") ÷ 9 = (" + num(r.target) + " × " + r.fatP.toFixed(2) + ") ÷ 9 = <b>" + num(r.fatG) + " g</b> (" + num(r.fatK) + " kcal)"],
+
+      ["05 · Carbohydrate takes the remainder",
+       "Carbs = (target − protein kcal − fat kcal) ÷ 4<br>" +
+       "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= (" + num(r.target) + " − " + num(r.proK) + " − " + num(r.fatK) + ") ÷ 4 = <b>" +
+       num(Math.max(0, r.carbG)) + " g</b>"]
+    ];
+
+    var host = $("eqs");
+    host.innerHTML = "";
+    rows.forEach(function(row){
+      var d = document.createElement("div"); d.className = "eq";
+      var n = document.createElement("div"); n.className = "eq-name"; n.textContent = row[0];
+      var b = document.createElement("div"); b.className = "eq-body"; b.innerHTML = row[1];
+      d.appendChild(n); d.appendChild(b); host.appendChild(d);
+    });
+  }
+
+  /* ---------- inputs ---------- */
+  function syncInputs(){
+    $("age").value = S.age;
+    $("lb").value  = Math.round(S.weightLb);
+    $("kg").value  = Math.round((S.weightLb / LB_PER_KG) * 10) / 10;
+    $("ft").value  = Math.floor(S.heightIn / 12);
+    $("inch").value = Math.round(S.heightIn % 12);
+    $("cm").value  = Math.round(S.heightIn * 2.54);
+
+    var imp = S.units === "imperial";
+    $("wrap-lb").hidden = !imp;
+    $("wrap-ftin").hidden = !imp;
+    $("wrap-kg").hidden = imp;
+    $("wrap-cm").hidden = imp;
+    $("u-imp").setAttribute("aria-checked", imp ? "true" : "false");
+    $("u-met").setAttribute("aria-checked", imp ? "false" : "true");
+    $("sex-f").setAttribute("aria-checked", S.sex === "female" ? "true" : "false");
+    $("sex-m").setAttribute("aria-checked", S.sex === "male" ? "true" : "false");
+  }
+
+  function clamp(n, lo, hi, fallback){
+    if(!isFinite(n) || n === null) return fallback;
+    return Math.min(hi, Math.max(lo, n));
+  }
+
+  function wireNumber(id, handler){
+    $(id).addEventListener("input", function(){
+      handler(parseFloat($(id).value));
+      S.touched = true; render(); save();
+    });
+    $(id).addEventListener("blur", function(){ syncInputs(); render(); });
+  }
+
+  function init(){
+    buildCards("act",  ACTIVITY, "act");
+    buildCards("rate", RATES,    "rate");
+    buildCards("prot", PROTEIN,  "ppl");
+    buildCards("fat",  FATS,     "fatPct");
+
+    $("u-imp").addEventListener("click", function(){ S.units="imperial"; syncInputs(); save(); });
+    $("u-met").addEventListener("click", function(){ S.units="metric";  syncInputs(); save(); });
+    $("sex-f").addEventListener("click", function(){ S.sex="female"; S.touched=true; syncInputs(); render(); save(); });
+    $("sex-m").addEventListener("click", function(){ S.sex="male";   S.touched=true; syncInputs(); render(); save(); });
+
+    wireNumber("age",  function(v){ S.age = clamp(v, 14, 99, S.age); });
+    wireNumber("lb",   function(v){ S.weightLb = clamp(v, 60, 600, S.weightLb); });
+    wireNumber("kg",   function(v){ S.weightLb = clamp(v, 30, 275, S.weightLb/LB_PER_KG) * LB_PER_KG; });
+    wireNumber("ft",   function(v){ S.heightIn = clamp(v,3,7,Math.floor(S.heightIn/12))*12 + (S.heightIn % 12); });
+    wireNumber("inch", function(v){ S.heightIn = Math.floor(S.heightIn/12)*12 + clamp(v,0,11.9,S.heightIn%12); });
+    wireNumber("cm",   function(v){ S.heightIn = clamp(v,120,230, S.heightIn*2.54) / 2.54; });
+
+    wireSave();
+    loadLocal();
+    syncInputs();
+    render();
+    loadRemote();
+    loadDownloads();
+  }
+
+  /* ---------- PDF export (hand-built, no library) ---------- */
+  var NAVY=[0.063,0.094,0.169], RED=[0.902,0.224,0.275], PAPER=[0.965,0.961,0.949],
+      GREY=[0.431,0.455,0.502], HAIR=[0.835,0.824,0.792],
+      C_PRO=[0.902,0.224,0.275], C_FAT=[0.169,0.227,0.369], C_CARB=[0.604,0.573,0.518];
+
+  function ascii(v){
+    return String(v)
+      .replace(/[–—−]/g,"-").replace(/×/g,"x").replace(/÷/g,"/")
+      .replace(/·/g,"-").replace(/≈/g,"~").replace(/[‘’]/g,"'")
+      .replace(/[“”]/g,'"').replace(/±/g,"+/-").replace(/→/g,"->")
+      .replace(/[^\x20-\x7E]/g,"");
+  }
+  function esc(v){ return ascii(v).replace(/\\/g,"\\\\").replace(/\(/g,"\\(").replace(/\)/g,"\\)"); }
+  function f2(n){ return (Math.round(n*100)/100).toString(); }
+
+  function Sheet(){
+    this.ops = [];
+    this.H = 792;
+  }
+  Sheet.prototype.rect = function(x,yTop,w,h,c){
+    this.ops.push(c.join(" ")+" rg", f2(x)+" "+f2(this.H-yTop-h)+" "+f2(w)+" "+f2(h)+" re f");
+  };
+  Sheet.prototype.text = function(x,yTop,size,bold,c,str,track){
+    this.ops.push("BT", c.join(" ")+" rg", "/"+(bold?"F2":"F1")+" "+f2(size)+" Tf",
+      f2(track||0)+" Tc", f2(x)+" "+f2(this.H-yTop)+" Td", "("+esc(str)+") Tj", "ET");
+  };
+  Sheet.prototype.right = function(xRight,yTop,size,bold,c,str,track){
+    var w = this.width(str,size,bold,track||0);
+    this.text(xRight-w, yTop, size, bold, c, str, track);
+  };
+  /* Helvetica advance widths, /1000 em — enough for right-aligning short strings. */
+  var WIDTHS = {" ":278,"!":278,'"':355,"#":556,"$":556,"%":889,"&":667,"'":191,"(":333,")":333,
+    "*":389,"+":584,",":278,"-":333,".":278,"/":278,"0":556,"1":556,"2":556,"3":556,"4":556,
+    "5":556,"6":556,"7":556,"8":556,"9":556,":":278,";":278,"<":584,"=":584,">":584,"?":556,
+    "@":1015,"A":667,"B":667,"C":722,"D":722,"E":667,"F":611,"G":778,"H":722,"I":278,"J":500,
+    "K":667,"L":556,"M":833,"N":722,"O":778,"P":667,"Q":778,"R":722,"S":667,"T":611,"U":722,
+    "V":667,"W":944,"X":667,"Y":667,"Z":611,"[":278,"\\":278,"]":278,"^":469,"_":556,"`":333,
+    "a":556,"b":556,"c":500,"d":556,"e":556,"f":278,"g":556,"h":556,"i":222,"j":222,"k":500,
+    "l":222,"m":833,"n":556,"o":556,"p":556,"q":556,"r":333,"s":500,"t":278,"u":556,"v":500,
+    "w":722,"x":500,"y":500,"z":500,"{":334,"|":260,"}":334,"~":584};
+  var BOLD_EXTRA = 1.055;
+  Sheet.prototype.width = function(str,size,bold,track){
+    var t = ascii(str), w = 0;
+    for(var i=0;i<t.length;i++){ w += (WIDTHS[t[i]] || 556); }
+    w = w/1000*size*(bold?BOLD_EXTRA:1);
+    return w + (track||0)*t.length;
+  };
+  Sheet.prototype.build = function(){
+    var stream = this.ops.join("\n");
+    var objs = [null,
+      "<< /Type /Catalog /Pages 2 0 R >>",
+      "<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+      "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 5 0 R /F2 6 0 R >> >> /Contents 4 0 R >>",
+      "<< /Length "+stream.length+" >>\nstream\n"+stream+"\nendstream",
+      "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>",
+      "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>"];
+    var out = "%PDF-1.4\n", offs = [];
+    for(var i=1;i<objs.length;i++){ offs[i] = out.length; out += i+" 0 obj\n"+objs[i]+"\nendobj\n"; }
+    var xref = out.length;
+    out += "xref\n0 "+objs.length+"\n0000000000 65535 f \n";
+    for(i=1;i<objs.length;i++){ out += ("0000000000"+offs[i]).slice(-10)+" 00000 n \n"; }
+    out += "trailer\n<< /Size "+objs.length+" /Root 1 0 R >>\nstartxref\n"+xref+"\n%%EOF";
+    return out;
+  };
+
+  function heightLabel(){
+    if(S.units === "metric") return Math.round(S.heightIn*2.54) + " cm";
+    return Math.floor(S.heightIn/12) + " ft " + Math.round(S.heightIn%12) + " in";
+  }
+  function weightLabel(){
+    if(S.units === "metric") return (Math.round(S.weightLb/LB_PER_KG*10)/10) + " kg";
+    return Math.round(S.weightLb) + " lb";
+  }
+  function rateLabel(){
+    for(var i=0;i<RATES.length;i++){ if(RATES[i].v === S.rate) return RATES[i].label; }
+    return one(S.rate) + " lb/wk";
+  }
+  function actLabel(){
+    for(var i=0;i<ACTIVITY.length;i++){ if(ACTIVITY[i].v === S.act) return ACTIVITY[i].label + " (x" + S.act + ")"; }
+    return "x" + S.act;
+  }
+
+  function buildPdf(){
+    var r = compute(), gaining = r.rate < 0;
+    var carbG = Math.max(0, r.carbG), carbK = Math.max(0, r.carbK);
+    var d = new Date();
+    var stamp = d.toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"});
+    var M = 54, RM = 558, p = new Sheet(), y;
+
+    /* masthead */
+    p.rect(0,0,612,92,NAVY);
+    p.text(M,34,7.5,true,[0.58,0.63,0.74],"STARFIGHTER FITNESS - NUTRITION DESK",1.6);
+    p.text(M,68,27,true,PAPER,"STARFIGHTER MACROS",-0.5);
+    p.rect(0,92,612,4,RED);
+
+    p.right(RM,34,7.5,false,[0.58,0.63,0.74],"SAVED "+stamp.toUpperCase(),1.2);
+
+    /* the headline number */
+    y = 136;
+    p.text(M,y,8,true,GREY,"DAILY INTAKE TARGET",1.8);
+    p.text(M,y+44,44,true,NAVY,num(r.target),-1.2);
+    p.text(M+p.width(num(r.target),44,true,-1.2)+9,y+44,11,true,GREY,"KCAL",1.2);
+
+    /* two columns: inputs | energy */
+    var colY = y+72, L = M, R = 320;
+    p.rect(L,colY,240,1.2,HAIR); p.rect(R,colY,238,1.2,HAIR);
+    p.text(L,colY+16,8,true,NAVY,"INPUTS",1.6);
+    p.text(R,colY+16,8,true,NAVY,"ENERGY",1.6);
+
+    var rows = [
+      [L, [["Sex", S.sex === "male" ? "Male" : "Female"],
+           ["Age", S.age + " years"],
+           ["Height", heightLabel()],
+           ["Weight", weightLabel()],
+           ["Activity", actLabel()],
+           ["Rate", rateLabel()],
+           ["Protein setting", one(r.ppl) + " g/lb"],
+           ["Fat share", Math.round(r.fatP*100) + "% of intake"]]],
+      [R, [["BMR (Mifflin-St Jeor)", num(r.bmr) + " kcal"],
+           ["TDEE", num(r.tdee) + " kcal"],
+           [r.adjust === 0 ? "Adjustment" : (gaining ? "Surplus" : "Deficit"),
+            (r.adjust === 0 ? "0" : (gaining ? "+" : "-") + num(Math.abs(r.adjust))) + " kcal"],
+           ["Intake target", num(r.target) + " kcal"]]]
+    ];
+    rows.forEach(function(col){
+      var x = col[0], ry = colY + 34;
+      col[1].forEach(function(row){
+        p.text(x,ry,9,false,GREY,row[0]);
+        p.right(x + (x === L ? 240 : 238), ry, 9, true, NAVY, row[1]);
+        p.rect(x, ry+6, x === L ? 240 : 238, 0.5, HAIR);
+        ry += 19;
+      });
+    });
+
+    /* macro table */
+    y = colY + 34 + 8*19 + 16;
+    p.rect(M,y,504,1.2,HAIR);
+    p.text(M,y+16,8,true,NAVY,"THE SPLIT",1.6);
+    var macros = [
+      ["PROTEIN", one(r.ppl)+" g/lb of bodyweight", r.proG, r.proK, C_PRO],
+      ["FAT",     Math.round(r.fatP*100)+"% of intake", r.fatG, r.fatK, C_FAT],
+      ["CARBS",   "the remainder",                  carbG,  carbK,  C_CARB]
+    ];
+    var my = y + 38, tot = r.target > 0 ? r.target : 1;
+    macros.forEach(function(m){
+      p.rect(M,my-7,9,9,m[4]);
+      p.text(M+17,my,12,true,NAVY,m[0],0.3);
+      p.text(M+17+p.width(m[0],12,true,0.3)+13,my,8,false,GREY,m[1]);
+      p.right(RM-120,my,14,true,NAVY,num(m[2])+" g",-0.3);
+      p.right(RM,my,9,false,GREY,num(m[3])+" kcal   "+Math.round(m[3]/tot*100)+"%");
+      p.rect(M,my+9,504,0.5,HAIR);
+      my += 26;
+    });
+
+    /* stacked bar */
+    var sum = r.proK + r.fatK + carbK; if(sum <= 0) sum = 1;
+    var bx = M, bw = 504, bh = 9, by = my - 2;
+    [[r.proK,C_PRO],[r.fatK,C_FAT],[carbK,C_CARB]].forEach(function(seg){
+      var w = seg[0]/sum*bw;
+      p.rect(bx,by,w,bh,seg[1]);
+      bx += w;
+    });
+
+    /* arithmetic */
+    y = by + 30;
+    p.rect(M,y,504,1.2,HAIR);
+    p.text(M,y+16,8,true,NAVY,"THE ARITHMETIC",1.6);
+    var sexTerm = S.sex === "male" ? "+ 5" : "- 161";
+    var lines = [
+      "BMR   = (10 x "+one(r.kg)+" kg) + (6.25 x "+one(r.cm)+" cm) - (5 x "+S.age+") "+sexTerm+" = "+num(r.bmr)+" kcal",
+      "TDEE  = "+num(r.bmr)+" x "+r.act+" = "+num(r.tdee)+" kcal",
+      (r.adjust === 0 ? "Adjustment = none" :
+        (gaining?"Surplus":"Deficit")+" = ("+one(Math.abs(r.rate))+" lb/wk x 3,500) / 7 = "+num(Math.abs(r.adjust))+" kcal/day"),
+      "Target = "+num(r.tdee)+(r.adjust === 0 ? "" : (gaining?" + ":" - ")+num(Math.abs(r.adjust)))+" = "+num(r.target)+" kcal",
+      "Protein = "+num(S.weightLb)+" lb x "+one(r.ppl)+" = "+num(r.proG)+" g  ("+num(r.proK)+" kcal)",
+      "Fat     = ("+num(r.target)+" x "+r.fatP.toFixed(2)+") / 9 = "+num(r.fatG)+" g  ("+num(r.fatK)+" kcal)",
+      "Carbs   = ("+num(r.target)+" - "+num(r.proK)+" - "+num(r.fatK)+") / 4 = "+num(carbG)+" g"
+    ];
+    var ly = y + 36;
+    lines.forEach(function(t){ p.text(M,ly,8.5,false,[0.25,0.29,0.38],t); ly += 14; });
+
+    /* notes — a coach's sheet gets room to write on */
+    y = ly + 14;
+    p.rect(M,y,504,1.2,HAIR);
+    p.text(M,y+16,8,true,NAVY,"NOTES",1.6);
+    p.text(M+52,y+16,7.5,false,GREY,"weight trend, waist, training quality, appetite");
+    var ny = y + 38;
+    for(var k=0;k<5;k++){ p.rect(M,ny,504,0.5,HAIR); ny += 20; }
+
+    /* footer */
+    var fy = 742;
+    p.rect(M,fy-16,504,1.2,NAVY);
+    p.text(M,fy,7,false,GREY,"Mifflin MD, St Jeor ST, Hill LA, Scott BJ, Daugherty SA, Koh YO. Am J Clin Nutr 1990;51(2):241-247. Population-level equation:");
+    p.text(M,fy+11,7,false,GREY,"individual resting metabolic rate varies roughly +/-10-15% from its prediction. Planning estimate for training and nutrition, not medical advice.");
+    p.right(RM,fy+24,7,true,GREY,"STARFIGHTER FITNESS",1.2);
+    p.text(M,fy+24,7,true,GREY,"RECHECK EVERY TWO TO THREE WEEKS",1.2);
+
+    return p.build();
+  }
+
+  function pdfName(){
+    var d = new Date(), pad = function(n){ return (n<10?"0":"")+n; };
+    return "Starfighter-Macros_" + d.getFullYear() + "-" + pad(d.getMonth()+1) + "-" + pad(d.getDate()) + ".pdf";
+  }
+
+  function noteSave(text, warn){
+    var n = $("saveNote");
+    n.textContent = text || "";
+    n.className = warn ? "save-note warn" : "save-note";
+    n.hidden = !text;
+  }
+  function wireSave(){
+    $("saveBtn").addEventListener("click", function(){
+      var btn = $("saveBtn");
+      btn.disabled = true; btn.textContent = "Building…"; noteSave("");
+      var blob;
+      try{
+        blob = new Blob([buildPdf()], {type:"application/pdf"});
+      }catch(e){
+        btn.disabled = false; btn.textContent = "Save these numbers as PDF";
+        noteSave("Could not build the file.", true); return;
+      }
+      try{
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement("a");
+        a.href = url; a.download = pdfName(); a.style.display = "none";
+        document.body.appendChild(a); a.click();
+        setTimeout(function(){
+          if(a.parentNode) a.parentNode.removeChild(a);
+          URL.revokeObjectURL(url);
+        }, 3000);
+        btn.textContent = "Saved"; noteSave("");
+        setTimeout(function(){ btn.textContent = "Save these numbers as PDF"; btn.disabled = false; }, 2200);
+      }catch(e){
+        btn.textContent = "Save these numbers as PDF"; btn.disabled = false;
+        noteSave("The download did not start. Try another browser.", true);
+      }
+    });
+  }
+  function loadDownloads(){ $("saveWrap").hidden = false; }
+
+  /* ---------- persistence ---------- */
+  var KEY = "starfighter-macros-v1";
+  var saveTimer = null;
+
+  function snapshot(){
+    return {units:S.units, sex:S.sex, age:S.age, weightLb:S.weightLb,
+            heightIn:S.heightIn, act:S.act, rate:S.rate, ppl:S.ppl,
+            fatPct:S.fatPct, touched:S.touched};
+  }
+  function apply(d){
+    if(!d || typeof d !== "object") return;
+    if(d.units === "metric" || d.units === "imperial") S.units = d.units;
+    if(d.sex === "male" || d.sex === "female") S.sex = d.sex;
+    ["age","weightLb","heightIn","act","rate","ppl","fatPct"].forEach(function(k){
+      if(typeof d[k] === "number" && isFinite(d[k])) S[k] = d[k];
+    });
+    if(d.touched) S.touched = true;
+  }
+  function loadLocal(){
+    try{
+      var raw = window.localStorage.getItem(KEY);
+      if(raw) apply(JSON.parse(raw));
+    }catch(e){}
+  }
+  function save(){
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(function(){
+      var data = snapshot();
+      try{ window.localStorage.setItem(KEY, JSON.stringify(data)); }catch(e){}
+    }, 500);
+  }
+  function loadRemote(){}
+
+  var FONT_HREF = "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap";
+  function ensureFont(){
+    try{
+      if(document.querySelector('link[data-sfm-font]')) return;
+      var l = document.createElement("link");
+      l.rel = "stylesheet"; l.href = FONT_HREF; l.setAttribute("data-sfm-font","1");
+      (document.head || document.documentElement).appendChild(l);
+    }catch(e){}
+  }
+
+  /* The page builder hands this element a fixed-width column. Measure how far
+     it sits from each edge of the document and pull the calculator out by
+     exactly that much, so the navy bars span the window. documentElement
+     .clientWidth excludes the scrollbar, which 100vw does not -- using it is
+     what keeps this from creating a horizontal scrollbar of its own. */
+  var bleedTimer = null;
+  function syncBleed(){
+    try{
+      var host = document.getElementById("starfighter-macros");
+      if(!host) return;
+      var r = host.getBoundingClientRect();
+      var docW = document.documentElement.clientWidth;
+      host.style.setProperty("--sfm-bleed-l", (-Math.max(0, Math.round(r.left))) + "px");
+      host.style.setProperty("--sfm-bleed-r", (-Math.max(0, Math.round(docW - r.right))) + "px");
+    }catch(e){}
+  }
+  function watchBleed(){
+    syncBleed();
+    try{
+      window.addEventListener("resize", function(){
+        clearTimeout(bleedTimer);
+        bleedTimer = setTimeout(syncBleed, 120);
+      });
+      if(document.fonts && document.fonts.ready){ document.fonts.ready.then(syncBleed)["catch"](function(){}); }
+      setTimeout(syncBleed, 400);
+      setTimeout(syncBleed, 1500);
+    }catch(e){}
+  }
+
+  function mount(){
+    ensureFont();
+    var host = document.getElementById("starfighter-macros");
+    if(!host || host.shadowRoot) return;
+    ROOT = host.attachShadow({mode:"open"});
+    ROOT.innerHTML = '<style>@import url("' + FONT_HREF + '");</style>' +
+                     "<style>" + SFM_CSS + "</style>" + SFM_HTML;
+    init();
+    watchBleed();
+  }
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", mount);
+  } else { mount(); }
+})();
+</script>

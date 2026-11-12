@@ -11,6 +11,7 @@ emb = root / "embed.html"
 html = re.sub(r'var PAYLOAD = "[^"]+"', lambda m: 'var PAYLOAD = "' + payload + '"', emb.read_text(), count=1)
 emb.write_text(html)
 vf = root / "version.json"
-v = json.loads(vf.read_text())["v"] + 1
-vf.write_text(json.dumps({"v": v}) + "\n")
+data = json.loads(vf.read_text())
+v = data["v"] = data["v"] + 1
+vf.write_text(json.dumps(data) + "\n")
 print("embed.html rebuilt, version", v)
