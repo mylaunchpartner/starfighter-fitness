@@ -1,0 +1,593 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Online longevity coaching, delivered nationwide. Train to be strong, functional, and independent past 100 — one 90-day protocol at a time.">
+<meta name="theme-color" content="#10182B">
+<meta name="color-scheme" content="dark light">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Starfighter Fitness — Online Longevity Coaching">
+<meta property="og:description" content="Online longevity coaching, delivered nationwide. Train to be strong, functional, and independent past 100 — one 90-day protocol at a time.">
+<title>Starfighter Fitness — Online Longevity Coaching</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Instrument+Sans:wght@400;500;600;700&family=Martian+Mono:wght@400;500;600&display=swap"><style>
+/* ============================================================
+   STARFIGHTER FITNESS — Brand System 2026
+   Palette   Command Navy #10182B · Off-White #F6F5F2
+             Fitness Red #E63946 · hover #C32E39 · on-navy #FF6B75
+             Steel Gray #6E7480 · Default-path #565D6B · Paper #FFFFFF
+   Type      Archivo Expanded 900 (display) · Instrument Sans (body)
+             Martian Mono (telemetry labels)
+   Concept   A flight plan for the second half. Dark altitude decks
+             bracket a chalk-ground instrument panel. One recurring
+             motif: the healthspan curve.
+   Single-theme by design — every color painted explicitly.
+   ============================================================ */
+:root{
+  --altitude:#10182B;
+  --altitude-2:#18223A;
+  --altitude-3:#232E4A;
+  --chalk:#F6F5F2;
+  --paper:#FFFFFF;
+  --red:#E63946;
+  --red-lift:#FF6B75;
+  --ash:#6E7480;
+  --ash-dim:#9BA1AC;
+  --decline:#565D6B;
+  --hairline-dark:rgba(255,255,255,.13);
+  --hairline-light:rgba(16,24,43,.14);
+  --f-display:"Archivo","Arial Black",system-ui,sans-serif;
+  --f-body:"Instrument Sans","Helvetica Neue",Arial,sans-serif;
+  --f-mono:"Martian Mono","IBM Plex Mono","Courier New",monospace;
+  --shell:min(1240px,100% - 2.5rem);
+  --step:clamp(4.5rem,9vw,8.5rem);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+section[id],header[id]{scroll-margin-top:80px}
+body{
+  margin:0;
+  background:var(--chalk);
+  color:var(--altitude);
+  font-family:var(--f-body);
+  font-size:clamp(1rem,.96rem + .2vw,1.125rem);
+  line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+img,svg{max-width:100%}
+a{color:inherit}
+::selection{background:var(--red);color:#fff}
+/* ---------- type primitives ---------- */
+.display{
+  font-family:var(--f-display);
+  font-weight:900;
+  font-stretch:125%;
+  line-height:.86;
+  letter-spacing:-.025em;
+  text-wrap:balance;
+  margin:0;
+  text-transform:uppercase;
+}
+.h1{font-size:clamp(3.1rem,10.5vw,8.75rem)}
+.h2{font-size:clamp(2.2rem,5.4vw,4.4rem)}
+.h3{font-size:clamp(1.35rem,2.2vw,1.85rem);line-height:.95}
+.label{
+  font-family:var(--f-mono);
+  font-size:.6875rem;
+  font-weight:500;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  line-height:1.4;
+}
+.lede{font-size:clamp(1.075rem,1.6vw,1.3125rem);line-height:1.55;max-width:62ch}
+.measure{max-width:64ch}
+/* ---------- layout ---------- */
+.shell{width:var(--shell);margin-inline:auto}
+section{padding-block:var(--step)}
+.deck-dark{background:var(--altitude);color:var(--chalk)}
+.deck-dark .lede{color:#C6CAD4}
+.deck-light{background:var(--chalk);color:var(--altitude)}
+.deck-light .lede{color:#414857}
+.sec-head{display:flex;flex-direction:column;gap:1.35rem;margin-bottom:3.25rem}
+.sec-head .label{color:var(--red)}
+.deck-dark .sec-head .label,
+.manifesto .sec-head .label,
+.book .sec-head .label{color:var(--red-lift)}
+.manifesto .lede,.book .lede{color:#C6CAD4}
+.rule{height:1px;background:var(--hairline-light);border:0;margin:0}
+.deck-dark .rule{background:var(--hairline-dark)}
+/* ---------- nav ---------- */
+.nav{
+  position:relative;z-index:60;
+  background:var(--altitude);
+  border-bottom:1px solid var(--hairline-dark);
+  color:var(--chalk);
+}
+.nav-in{display:flex;align-items:center;gap:2rem;height:68px}
+.brand{display:flex;align-items:center;gap:.7rem;text-decoration:none;flex:0 0 auto}
+.brand-mark{width:30px;height:30px;flex:0 0 auto}
+.brand-txt{font-family:var(--f-display);font-weight:900;font-stretch:125%;font-size:.9rem;letter-spacing:-.01em;line-height:1;text-transform:uppercase}
+.brand-txt span{display:block;color:var(--red-lift);font-size:.62rem;letter-spacing:.24em;font-family:var(--f-mono);font-weight:500;font-stretch:normal;margin-top:.28rem}
+.nav-links{display:flex;gap:1.55rem;margin-left:auto}
+.nav-links a{
+  font-family:var(--f-mono);font-size:.6875rem;letter-spacing:.16em;text-transform:uppercase;
+  text-decoration:none;color:#A9AFBB;padding-block:.4rem;position:relative;white-space:nowrap;transition:color .2s;
+}
+.nav-links a::after{content:"";position:absolute;left:0;right:100%;bottom:0;height:1px;background:var(--red-lift);transition:right .28s ease}
+.nav-links a:hover{color:var(--chalk)}
+.nav-links a:hover::after{right:0}
+.nav-cta{margin-left:1.75rem}
+@media(max-width:1080px){.nav-links{display:none}.nav-cta{margin-left:auto}}
+/* ---------- buttons ---------- */
+.btn{
+  display:inline-flex;align-items:center;gap:.7rem;
+  font-family:var(--f-mono);font-size:.72rem;font-weight:500;letter-spacing:.15em;text-transform:uppercase;
+  padding:1.05rem 1.6rem;text-decoration:none;border:1px solid transparent;white-space:nowrap;
+  transition:background .22s,color .22s,border-color .22s,transform .22s;
+}
+.btn:focus-visible{outline:2px solid var(--red-lift);outline-offset:3px}
+.btn-primary{background:var(--red);color:#fff}
+.btn-primary:hover{background:#C32E39;transform:translateY(-2px)}
+.btn-ghost{border-color:var(--hairline-dark);color:var(--chalk)}
+.btn-ghost:hover{border-color:var(--chalk);background:rgba(255,255,255,.06)}
+.btn-dark{background:var(--altitude);color:var(--chalk)}
+.btn-dark:hover{background:var(--red);transform:translateY(-2px)}
+.btn-sm{padding:.72rem 1.05rem;font-size:.66rem}
+.btn .arrow{transition:transform .22s}
+.btn:hover .arrow{transform:translateX(4px)}
+/* ---------- hero ---------- */
+.hero{
+  background:var(--altitude);color:var(--chalk);
+  padding-block:clamp(4.5rem,10vw,8rem) clamp(3rem,5vw,4.5rem);
+  position:relative;overflow:hidden;
+}
+.hero::before{
+  content:"";position:absolute;inset:auto -20% -55% 30%;height:105%;
+  background:radial-gradient(closest-side,rgba(230,57,70,.30),transparent 72%);
+  pointer-events:none;
+}
+.hero-in{position:relative;z-index:1}
+.hero-eyebrow{display:flex;flex-wrap:wrap;gap:.6rem 1.35rem;align-items:center;color:var(--red-lift);margin-bottom:2.25rem}
+.hero-eyebrow .dot{width:6px;height:6px;background:var(--red-lift);border-radius:50%;display:inline-block}
+.hero h1{color:var(--chalk)}
+.hero h1 em{font-style:normal;color:var(--red-lift)}
+.hero-sub{margin:2.4rem 0 0;max-width:56ch;font-size:clamp(1.075rem,1.65vw,1.375rem);line-height:1.5;color:#C9CDD6}
+.hero-sub b{color:var(--chalk);font-weight:600}
+.hero-actions{display:flex;flex-wrap:wrap;gap:.85rem;margin-top:2.75rem}
+/* telemetry rail */
+.telemetry{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  border-top:1px solid var(--hairline-dark);margin-top:clamp(3rem,6vw,5rem);
+}
+.tele{padding:1.6rem 1.4rem 0 0;border-right:1px solid var(--hairline-dark)}
+.tele:last-child{border-right:0}
+.tele-n{font-family:var(--f-display);font-weight:900;font-stretch:125%;font-size:clamp(1.75rem,3.4vw,2.9rem);line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.tele-n sub{font-size:.42em;vertical-align:baseline;color:var(--red-lift);font-family:var(--f-mono);font-weight:500;margin-left:.3em;font-stretch:normal}
+.tele-l{color:var(--ash-dim);margin-top:.65rem;max-width:22ch}
+@media(max-width:760px){
+  .telemetry{grid-template-columns:1fr 1fr}
+  .tele{padding-bottom:1.4rem;border-bottom:1px solid var(--hairline-dark)}
+  .tele:nth-child(2n){border-right:0}
+  .tele:nth-last-child(-n+2){border-bottom:0}
+}
+/* ---------- marquee ---------- */
+.marquee{background:var(--red);color:#fff;padding:0;overflow:hidden;border-block:1px solid rgba(255,255,255,.2)}
+.marquee-track{display:flex;width:max-content;animation:slide 46s linear infinite}
+.marquee span{
+  font-family:var(--f-display);font-weight:900;font-stretch:125%;text-transform:uppercase;
+  font-size:clamp(1.15rem,2.4vw,1.9rem);letter-spacing:-.01em;
+  padding:1.1rem 0;white-space:nowrap;display:flex;align-items:center;
+}
+.marquee span::after{content:"◆";font-family:var(--f-body);font-size:.5em;margin-inline:1.6rem;opacity:.65;font-weight:400}
+@keyframes slide{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+/* ---------- the gap ---------- */
+.gap-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:clamp(2.5rem,5vw,4.5rem);align-items:end}
+@media(max-width:940px){.gap-grid{grid-template-columns:1fr}}
+.chart-wrap{overflow-x:auto;padding-bottom:.5rem}
+.chart{display:block;width:100%;height:auto}
+.chart .grid-line{stroke:var(--hairline-light);stroke-width:1.5}
+.chart .axis-txt{font-family:var(--f-mono);font-size:17px;letter-spacing:.08em;fill:var(--ash);text-transform:uppercase}
+.chart .curve{fill:none;stroke-width:4.5;stroke-linecap:round}
+.chart .curve-default{stroke:var(--decline)}
+.chart .curve-trained{stroke:var(--red)}
+.chart .thresh{stroke:var(--altitude);stroke-width:2;stroke-dasharray:3 8;opacity:.55}
+.chart .band{fill:var(--decline);opacity:.10}
+.chart .curve,.chart .band{transition:none}
+.draw{stroke-dasharray:1400;stroke-dashoffset:1400}
+.in-view .draw{animation:draw 1.8s cubic-bezier(.22,.61,.36,1) forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.legend{display:flex;flex-wrap:wrap;gap:1.5rem;margin-top:1.5rem}
+.legend div{display:flex;align-items:center;gap:.55rem;color:var(--ash)}
+.swatch{width:20px;height:3px;flex:0 0 auto}
+.pain-list{display:grid;gap:0;margin-top:clamp(3.5rem,6vw,5rem);border-top:1px solid var(--hairline-light)}
+.pain{
+  display:grid;grid-template-columns:auto minmax(0,1fr);gap:1.5rem 2.5rem;
+  padding:2.1rem 0;border-bottom:1px solid var(--hairline-light);align-items:start;
+}
+.pain-age{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.16em;color:var(--decline);padding-top:.45rem;white-space:nowrap}
+.pain h3{margin:0 0 .55rem;font-family:var(--f-display);font-weight:800;font-stretch:112%;font-size:clamp(1.2rem,2.5vw,1.75rem);line-height:1.08;letter-spacing:-.015em}
+.pain p{margin:0;color:#4A5160;max-width:58ch}
+@media(max-width:640px){.pain{grid-template-columns:1fr;gap:.75rem}}
+/* ---------- manifesto ---------- */
+.manifesto{background:var(--altitude);color:var(--chalk);position:relative;overflow:hidden}
+.manifesto::before{
+  content:"";position:absolute;inset:-40% -10% auto -25%;height:120%;
+  background:radial-gradient(closest-side,rgba(230,57,70,.12),transparent 70%);pointer-events:none;
+}
+.manifesto .shell{position:relative;z-index:1}
+.manifesto-lines{display:grid;gap:1.15rem;margin:0;padding:0;list-style:none}
+.manifesto-lines li{
+  font-family:var(--f-display);font-weight:900;font-stretch:125%;text-transform:uppercase;
+  font-size:clamp(1.5rem,4.1vw,3.1rem);line-height:.95;letter-spacing:-.025em;
+}
+.manifesto-lines li.mute{color:#3C465C}
+.manifesto-lines li em{font-style:normal;color:var(--red-lift)}
+.manifesto-foot{margin-top:3rem;max-width:60ch;color:#B8BDC8;font-size:1.0625rem}
+/* ---------- protocol ---------- */
+.phases{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--hairline-light);border:1px solid var(--hairline-light)}
+@media(max-width:860px){.phases{grid-template-columns:1fr}}
+.phase{background:var(--paper);padding:clamp(1.75rem,3vw,2.5rem);display:flex;flex-direction:column;gap:1rem;position:relative}
+.phase-n{font-family:var(--f-mono);font-size:.7rem;letter-spacing:.18em;color:var(--red)}
+.phase h3{margin:0;font-family:var(--f-display);font-weight:900;font-stretch:125%;text-transform:uppercase;font-size:clamp(1.5rem,3vw,2.15rem);line-height:.9;letter-spacing:-.02em}
+.phase p{margin:0;color:#4A5160;font-size:1rem}
+.phase ul{margin:.4rem 0 0;padding:0;list-style:none;display:grid;gap:.55rem;border-top:1px solid var(--hairline-light);padding-top:1.1rem}
+.phase li{font-family:var(--f-mono);font-size:.7rem;letter-spacing:.08em;color:#5B6272;display:flex;gap:.6rem;align-items:baseline;text-transform:uppercase}
+.phase li::before{content:"—";color:var(--red);flex:0 0 auto}
+/* ---------- includes ---------- */
+.includes{display:grid;grid-template-columns:repeat(auto-fit,minmax(258px,1fr));gap:1px;background:var(--altitude);border:1px solid var(--hairline-dark);margin-top:3rem}
+.inc{background:var(--altitude-2);outline:1px solid var(--hairline-dark);padding:2.1rem 1.75rem;display:flex;flex-direction:column;gap:.85rem}
+.inc svg{width:26px;height:26px;stroke:var(--red-lift);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.inc h3{margin:0;font-family:var(--f-display);font-weight:800;font-stretch:112%;font-size:1.0625rem;letter-spacing:-.005em;text-transform:uppercase;line-height:1.1}
+.inc p{margin:0;color:#A8AEBA;font-size:.95rem;line-height:1.55}
+/* ---------- tracks ---------- */
+.tracks{display:grid;grid-template-columns:repeat(auto-fit,minmax(232px,1fr));gap:1px;background:var(--paper);border:1px solid var(--hairline-light)}
+.track{background:var(--paper);outline:1px solid var(--hairline-light);padding:1.85rem 1.5rem;display:flex;flex-direction:column;gap:.9rem;transition:background .25s,color .25s}
+.track:hover{background:var(--altitude);color:var(--chalk)}
+.track .label{color:var(--ash)}
+.track:hover .label{color:var(--red-lift)}
+.track-name{font-family:var(--f-display);font-weight:900;font-stretch:112%;text-transform:uppercase;font-size:clamp(1.05rem,1.5vw,1.3rem);line-height:.98;letter-spacing:-.015em;margin-top:auto;overflow-wrap:anywhere}
+.track-days{font-family:var(--f-mono);font-size:.7rem;letter-spacing:.14em;color:var(--red)}
+.track:hover .track-days{color:var(--red-lift)}
+/* ---------- fit ---------- */
+.fit{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--hairline-dark);border:1px solid var(--hairline-dark)}
+@media(max-width:760px){.fit{grid-template-columns:1fr}}
+.fit-col{background:var(--altitude-2);padding:clamp(1.75rem,3vw,2.6rem)}
+.fit-col h3{margin:0 0 1.5rem;font-family:var(--f-display);font-weight:900;font-stretch:125%;text-transform:uppercase;font-size:clamp(1.25rem,2.4vw,1.7rem);letter-spacing:-.015em;line-height:.95}
+.fit-col ul{margin:0;padding:0;list-style:none;display:grid;gap:1rem}
+.fit-col li{display:grid;grid-template-columns:auto 1fr;gap:.85rem;align-items:start;font-size:1rem;line-height:1.5;color:#BFC4CE}
+.fit-col li b{display:block;color:var(--chalk);font-weight:600}
+.tick{color:var(--red-lift);font-family:var(--f-mono);font-size:.8rem;padding-top:.15rem}
+.cross{color:var(--decline);font-family:var(--f-mono);font-size:.8rem;padding-top:.15rem}
+/* ---------- pricing ---------- */
+.price-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--hairline-light);border:1px solid var(--hairline-light)}
+@media(max-width:820px){.price-grid{grid-template-columns:1fr}}
+.price{background:var(--paper);padding:clamp(2rem,3.4vw,3rem);display:flex;flex-direction:column;gap:1.4rem}
+.price.feature{background:var(--altitude);color:var(--chalk)}
+.price-top{display:flex;justify-content:space-between;align-items:baseline;gap:1rem}
+.price .label{color:var(--red)}
+.price.feature .label{color:var(--red-lift)}
+.cap{font-family:var(--f-mono);font-size:.62rem;letter-spacing:.14em;padding:.35rem .6rem;border:1px solid var(--hairline-dark);color:var(--red-lift);white-space:nowrap}
+.price-fig{font-family:var(--f-display);font-weight:900;font-stretch:125%;font-size:clamp(3rem,7vw,4.75rem);line-height:.85;letter-spacing:-.035em;font-variant-numeric:tabular-nums}
+.price-fig small{font-family:var(--f-mono);font-size:.2em;font-weight:500;letter-spacing:.14em;font-stretch:normal;margin-left:.5rem;color:var(--ash)}
+.price.feature .price-fig small{color:var(--ash-dim)}
+.price-alt{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.1em;color:var(--ash);text-transform:uppercase}
+.price p{margin:0;color:#4A5160;font-size:1rem}
+.price.feature p{color:#B8BDC8}
+.price ul{margin:0;padding:0;list-style:none;display:grid;gap:.7rem;border-top:1px solid var(--hairline-light);padding-top:1.4rem}
+.price.feature ul{border-top-color:var(--hairline-dark)}
+.price li{font-size:.95rem;display:grid;grid-template-columns:auto 1fr;gap:.7rem;color:#4A5160}
+.price.feature li{color:#BFC4CE}
+.price li::before{content:"→";color:var(--red);font-family:var(--f-mono);font-size:.8rem}
+.price.feature li::before{color:var(--red-lift)}
+.price .btn{margin-top:auto;justify-content:center}
+.price-note{margin-top:1.75rem;color:#5B6272;font-size:.95rem;max-width:70ch}
+.price-note b{color:var(--altitude)}
+/* ---------- precision (ion deck) ---------- */
+.spot{background:var(--red);color:#fff}
+.spot .label{color:rgba(255,255,255,.86)}
+.spot h2{color:#fff}
+.spot .lede{color:rgba(255,255,255,.93)}
+.spot .rule{background:rgba(255,255,255,.28)}
+.spot-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:rgba(255,255,255,.28);border:1px solid rgba(255,255,255,.28);margin-top:3rem}
+@media(max-width:820px){.spot-grid{grid-template-columns:1fr}}
+.spot-card{background:var(--red);padding:clamp(1.9rem,3.2vw,2.75rem);display:flex;flex-direction:column;gap:1.1rem}
+.spot-card svg{width:28px;height:28px;stroke:#fff;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.spot-card h3{margin:0;font-family:var(--f-display);font-weight:900;font-stretch:118%;text-transform:uppercase;font-size:clamp(1.25rem,2.3vw,1.7rem);line-height:.95;letter-spacing:-.02em}
+.spot-card p{margin:0;color:rgba(255,255,255,.92);font-size:1rem;line-height:1.55}
+.spot-card ul{margin:.3rem 0 0;padding:0;list-style:none;display:grid;gap:.6rem;border-top:1px solid rgba(255,255,255,.28);padding-top:1.2rem}
+.spot-card li{font-family:var(--f-mono);font-size:.68rem;letter-spacing:.09em;text-transform:uppercase;color:rgba(255,255,255,.88);display:flex;gap:.6rem}
+.spot-card li::before{content:"—";flex:0 0 auto;opacity:.7}
+.spot-fine{margin-top:2rem;font-size:.85rem;line-height:1.6;color:rgba(255,255,255,.78);max-width:78ch}
+/* ---------- faq ---------- */
+.faq{display:grid;border-top:1px solid var(--hairline-light)}
+details{border-bottom:1px solid var(--hairline-light)}
+summary{
+  list-style:none;cursor:pointer;padding:1.6rem 3rem 1.6rem 0;position:relative;
+  font-family:var(--f-display);font-weight:800;font-stretch:112%;text-transform:uppercase;
+  font-size:clamp(1rem,1.9vw,1.3rem);line-height:1.15;letter-spacing:-.01em;
+}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";position:absolute;right:.25rem;top:50%;transform:translateY(-50%);font-family:var(--f-mono);font-size:1.4rem;color:var(--red);transition:transform .25s}
+details[open] summary::after{content:"–"}
+summary:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+details p{margin:0 0 1.75rem;color:#4A5160;max-width:70ch}
+/* ---------- book ---------- */
+.book{background:var(--altitude);color:var(--chalk);text-align:left;position:relative;overflow:hidden}
+.book::before{content:"";position:absolute;inset:-30% -30% auto 40%;height:130%;background:radial-gradient(closest-side,rgba(230,57,70,.34),transparent 70%);pointer-events:none}
+.book .shell{position:relative;z-index:1}
+.book-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.85fr);gap:clamp(2.5rem,5vw,4rem);align-items:center}
+@media(max-width:900px){.book-grid{grid-template-columns:1fr}}
+.book-slot{border:1px solid var(--hairline-dark);background:var(--altitude-2);padding:clamp(2rem,4vw,3rem);display:grid;gap:1.25rem;place-items:center;text-align:center;min-height:280px}
+.book-slot .label{color:var(--red-lift)}
+.book-slot p{margin:0;color:#A8AEBA;font-size:.95rem;max-width:34ch}
+.book-slot .btn{margin-top:.35rem}
+.book h2 em{font-style:normal;color:var(--red-lift)}
+/* inline booking calendar */
+.book-cal{background:var(--paper);border:1px solid var(--hairline-dark);border-top:3px solid var(--red);padding:.4rem;overflow:hidden}
+.book-cal iframe{display:block;width:100%;border:0;min-height:680px;overflow:hidden}
+@media (max-width:560px){.book-cal iframe{min-height:760px}}
+/* ---------- footer ---------- */
+footer{background:var(--altitude);color:var(--chalk);border-top:1px solid var(--hairline-dark);padding-block:clamp(3rem,5vw,4.5rem) 2rem}
+.foot-grid{display:grid;grid-template-columns:minmax(0,1.6fr) repeat(2,minmax(0,1fr));gap:2.5rem}
+@media(max-width:760px){.foot-grid{grid-template-columns:1fr}}
+.foot-grid p{color:#8E94A2;font-size:.95rem;max-width:40ch;margin:1.25rem 0 0}
+.foot-col h4{margin:0 0 1.1rem;font-family:var(--f-mono);font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--red-lift);font-weight:500}
+.foot-col ul{margin:0;padding:0;list-style:none;display:grid;gap:.7rem}
+.foot-col a{color:#A9AFBB;text-decoration:none;font-size:.95rem;transition:color .2s}
+.foot-col a:hover{color:var(--chalk)}
+.foot-bar{display:flex;flex-wrap:wrap;gap:1rem 2rem;justify-content:space-between;margin-top:3.25rem;padding-top:1.75rem;border-top:1px solid var(--hairline-dark);color:#6E7480}
+.disclaimer{color:#5F6572;font-size:.8125rem;line-height:1.6;max-width:88ch;margin-top:1.75rem}
+.disclaimer a{color:#8E94A2}
+/* ---------- mobile ---------- */
+@media (max-width:560px){
+  :root{--shell:min(1240px,100% - 2rem);--step:clamp(3.5rem,12vw,5rem)}
+  .nav-in{gap:.5rem;height:60px}
+  .brand-mark{width:26px;height:26px}
+  .brand-txt{font-size:.78rem}
+  .brand-txt span{font-size:.55rem;letter-spacing:.18em;margin-top:.22rem}
+  .nav-cta{margin-left:auto;padding:.62rem .8rem;font-size:.6rem}
+  .nav-cta .arrow{display:none}
+  .h1{font-size:clamp(2.6rem,13vw,4rem)}
+  .hero-eyebrow{gap:.45rem .9rem;margin-bottom:1.75rem}
+  .btn{padding:.95rem 1.25rem;font-size:.68rem}
+  .hero-actions{gap:.65rem}
+  .hero-actions .btn,.price .btn,.book .btn{flex:1 1 100%;width:100%;justify-content:center}
+  .sec-head{gap:1.05rem;margin-bottom:2.5rem}
+  .tele{padding-right:1rem}
+  summary{padding-right:2.4rem}
+  .price-top{flex-wrap:wrap}
+  /* the manifesto is written one statement per line — keep it that way */
+  .manifesto-lines{gap:.85rem}
+  .manifesto-lines li{font-size:clamp(1.2rem,5.4vw,2rem)}
+}
+@media (max-width:620px){
+  .chart .axis-txt{font-size:22px;letter-spacing:.05em}
+  .chart .curve{stroke-width:6.5}
+  .chart .thresh{stroke-width:3;stroke-dasharray:4 10}
+  .chart .tick-min{display:none}
+  .legend{gap:.5rem 1.25rem}
+}
+@media (max-width:380px){
+  .h1{font-size:clamp(2.25rem,12.5vw,3.4rem)}
+  .price-fig{font-size:clamp(2.5rem,15vw,3.5rem)}
+}
+/* long unbroken words must never force a horizontal scroll */
+.display,.track-name,.price-fig,.manifesto-lines li{overflow-wrap:break-word}
+/* ---------- reveal ---------- */
+.rv{opacity:1;transform:none;transition:opacity .7s cubic-bezier(.22,.61,.36,1),transform .7s cubic-bezier(.22,.61,.36,1)}
+.rv.in-view{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .rv{opacity:1;transform:none;transition:none}
+  .marquee-track{animation:none}
+  .draw{stroke-dasharray:none;stroke-dashoffset:0}
+  .in-view .draw{animation:none}
+  *{transition-duration:.01ms !important}
+}
+/* ============================================================
+   RED VARIANT — Starfighter Fitness division accent
+   #E63946, with #C32E39 for hover and small text on light,
+   and #FF6B75 for small text on Command Navy.
+   Red is confined to headline highlights, buttons, short labels,
+   stat numbers and UI. Long copy stays Command Navy or Steel Gray,
+   per the Starfighter Industries brand guidelines.
+   ============================================================ */
+:root{
+  --red-dk:#C32E39;      /* button hover, and small red text on light grounds */
+  --navy:var(--altitude);
+  --off-white:var(--chalk);
+  --steel:var(--ash);
+}
+/* Small red text on a light ground uses the darkened red: #E63946 is
+   3.8:1 on Off-White (AA large only), #C32E39 is 5.1:1 (AA all text). */
+.deck-light .sec-head .label,
+.phase-n,
+.track-days,
+.price .label,
+.price li::before,
+summary::after{color:var(--red-dk)}
+/* Headline highlights are display type — large text, so the full #E63946
+   carries at 4.2:1 on Command Navy. Only small text uses the lifted red. */
+.hero h1 em,
+.manifesto-lines li em,
+.book h2 em{color:var(--red)}
+.btn-primary:hover{background:var(--red-dk)}
+.btn-dark:hover{background:var(--red-dk)}
+/* CTAs ship at #E63946 as specified. White on #E63946 measures 4.17:1 —
+   AA for large text, just under the 4.5:1 a small button label wants.
+   Uncomment to run CTAs at the darkened red instead (5.57:1, AA all text):
+.btn-primary{background:var(--red-dk)}
+.btn-primary:hover{background:#A8262F}
+*/
+/* The brand is the curve that stays up. The untrained curve and the
+   surrender markers are the muted default path, not the accent. */
+.pain-age{color:var(--decline)}
+.cross{color:var(--ash-dim)}
+/* Precision deck: Command Navy ground with red accents rather than a red
+   flood. A saturated red section cannot carry body copy at AA, and a
+   full-bleed accent section breaks the guidelines' 60/30/10 usage ratio. */
+.spot{background:var(--altitude);color:var(--chalk)}
+.spot .label{color:var(--red-lift)}
+.spot h2{color:var(--chalk)}
+.spot .lede{color:#C6CAD4}
+.spot .rule{background:var(--hairline-dark)}
+.spot-grid{background:var(--hairline-dark);border-color:var(--hairline-dark)}
+.spot-card{background:var(--altitude-2);border-top:2px solid var(--red)}
+.spot-card svg{stroke:var(--red-lift)}
+.spot-card p{color:#B8BDC8}
+.spot-card ul{border-top-color:var(--hairline-dark)}
+.spot-card li{color:#A8AEBA}
+.spot-card li::before{color:var(--red-lift);opacity:1}
+.spot-fine{color:#8E94A2}
+</style><style>
+/* --- baseline reset (supplied by the Artifact host; explicit when standalone) --- */
+*,*::before,*::after{box-sizing:border-box}
+h1,h2,h3,h4,h5,h6,p,figure,blockquote,ul,ol,dl,dd{margin:0}
+img,svg{max-width:100%}
+button,input,select,textarea{font:inherit;color:inherit}
+</style></head>
+<body><nav class="nav"><div class="shell nav-in"><a class="brand" href="#top"><svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="1" y="1" width="30" height="30" fill="none" stroke="rgba(255,255,255,.22)"></rect><path d="M5 25 C11 25 12 13 19 10.5 C21 9.8 22.6 9.2 24 8.8" fill="none" stroke="#FF6B75" stroke-width="2.4" stroke-linecap="round"></path><path d="M25 4 l1.1 2.9 2.9 1.1 -2.9 1.1 -1.1 2.9 -1.1 -2.9 -2.9 -1.1 2.9 -1.1z" fill="#E63946"></path></svg><span class="brand-txt">Starfighter<span>Fitness</span></span></a><div class="nav-links"><a href="#gap">The Gap</a><a href="#protocol">The Protocol</a><a href="#tracks">Tracks</a><a href="#precision">Precision</a><a href="#pricing">Pricing</a><a href="#faq">Questions</a></div><a class="btn btn-primary btn-sm nav-cta" href="#book">Book a call <span class="arrow">→</span></a></div>
+</nav><header class="hero" id="top"><div class="shell hero-in"><div class="hero-eyebrow label"><span>Online longevity coaching</span><span class="dot"></span><span>All 50 states</span><span class="dot"></span><span>90-day protocol</span></div><h1 class="display h1">100 is the<br><em>floor.</em></h1><p class="hero-sub">
+      Not a fantasy. Not a bumper sticker. A number you train toward — starting with the next
+      ninety days. <b>Because the version of you at 85 is being built right now, by whatever you did today.</b></p><div class="hero-actions"><a class="btn btn-primary" href="#book">Book your strategy call <span class="arrow">→</span></a><a class="btn btn-ghost" href="#protocol">See the 90-day protocol</a></div><div class="telemetry"><div class="tele"><div class="tele-n">12.4<sub>yrs</sub></div><div class="tele-l label">The average American's healthspan gap — years lived sick</div></div><div class="tele"><div class="tele-n">90<sub>days</sub></div><div class="tele-l label">One full protocol. Foundation, Build, Results</div></div><div class="tele"><div class="tele-n">5<sub>tracks</sub></div><div class="tele-l label">Gym or garage. Dumbbells, bands, or a full rack</div></div><div class="tele"><div class="tele-n">50<sub>states</sub></div><div class="tele-l label">Coached remotely. Your city is not the constraint</div></div></div></div>
+</header><div class="marquee" aria-hidden="true"><div class="marquee-track"><span>Train for your nineties</span><span>Strength is the retirement account</span><span>The recliner is undefeated</span><span>Carry your own bags at 82</span><span>Get off the floor unassisted</span><span>Train for your nineties</span><span>Strength is the retirement account</span><span>The recliner is undefeated</span><span>Carry your own bags at 82</span><span>Get off the floor unassisted</span></div>
+</div><section class="deck-light" id="gap"><div class="shell"><div class="sec-head rv"><span class="label">The gap</span><h2 class="display h2">You'll live to 79.<br>You'll stop living at 66.</h2><p class="lede">
+        That difference has a name — the healthspan gap, and in the United States it averages 12.4 years. It is the stretch at the end
+        where you are technically alive and functionally finished. Nobody plans for it. Everybody
+        walks into it. And it does not arrive as a diagnosis; it arrives as a series of small
+        surrenders you barely notice giving up.
+      </p></div><div class="gap-grid"><div class="chart-wrap rv" id="chartwrap"><svg class="chart" viewBox="0 0 900 440" role="img" aria-label="Chart comparing an untrained decline in physical capacity, which drops below the independence floor around age 66, against a trained trajectory that stays above it past age 100."><rect x="524" y="40" width="121" height="330" class="band"></rect><line x1="70" y1="370" x2="862" y2="370" class="grid-line"></line><line x1="70" y1="286" x2="862" y2="286" class="thresh"></line><text x="70" y="278" class="axis-txt">Independence floor</text><path class="curve curve-default draw" d="M70,105 C160,100 220,124 320,164 C410,200 470,248 540,296 C620,350 720,368 780,372"></path><path class="curve curve-trained draw" d="M70,105 C150,96 200,86 300,84 C420,82 520,100 640,132 C740,159 820,186 862,206"></path><line x1="524" y1="40" x2="524" y2="370" class="grid-line"></line><line x1="645" y1="40" x2="645" y2="370" class="grid-line"></line><text x="533" y="58" class="axis-txt" style="fill:#565D6B">12.4 years</text><text x="70" y="392" class="axis-txt">Age 20</text><text x="456" y="392" class="axis-txt tick-min">60</text><text x="646" y="392" class="axis-txt">79</text><text x="820" y="392" class="axis-txt">100</text></svg><div class="legend label"><div><span class="swatch" style="background:#565D6B"></span> Untrained trajectory</div><div><span class="swatch" style="background:#E63946"></span> Trained trajectory</div></div></div><div class="rv"><p class="lede" style="margin-bottom:1.5rem">
+          The upper curve is not genetics. It is not luck. It is the accumulated result
+          of a few thousand small decisions about load, movement, protein, and sleep —
+          decisions that compound in exactly one direction for whoever makes them consistently.
+        </p><p class="measure" style="color:#4A5160;margin:0">
+          You cannot borrow strength at 75. There is no catch-up window. Every year you spend
+          untrained is a withdrawal from an account you will desperately need to draw on later.
+          Starfighter Fitness exists to make the deposits — deliberately, on a schedule,
+          with someone watching.
+        </p></div></div><div class="pain-list"><div class="pain rv"><div class="pain-age label">Surrender 01</div><div><h3>You start taking the handrail.</h3><p>Not because you need it. Because one day you almost did, and now you always will. That's the first thing you hand over, and you never take it back.</p></div></div><div class="pain rv"><div class="pain-age label">Surrender 02</div><div><h3>Your grandkid asks you to get on the floor. You say no.</h3><p>You say it lightly. You make a joke out of it. But you both know what you actually said, and the next generation just learned what old is supposed to look like.</p></div></div><div class="pain rv"><div class="pain-age label">Surrender 03</div><div><h3>Somebody starts carrying things for you.</h3><p>The suitcase. The groceries. The bag of soil in the parking lot. It's kindness, and it's a diagnosis, and it arrives roughly a decade before anyone says it out loud.</p></div></div><div class="pain rv"><div class="pain-age label">Surrender 04</div><div><h3>The trip gets planned without you.</h3><p>Everyone's very nice about it. There's a lot of walking, they say. Too much standing. And that is the year your world quietly shrinks to the size of your living room.</p></div></div></div></div>
+</section><section class="manifesto"><div class="shell"><div class="sec-head rv" style="margin-bottom:2.5rem"><span class="label">The position</span></div><ul class="manifesto-lines rv"><li class="mute">We are not here to get you</li><li class="mute">beach-ready in six weeks.</li><li>We train you to carry</li><li>your own bags at <em>82.</em></li><li>To get off the floor</li><li>unassisted at <em>91.</em></li><li>To walk into your own</li><li><em>hundredth</em> birthday</li><li>under your <em>own power.</em></li></ul><p class="manifesto-foot rv">
+      Every program we write is named <b style="color:#FF6B75;font-weight:600">Longevity</b> for a reason. The goal is not a photo in March.
+      It's function in your ninth decade — trained for now, on purpose, while it is still cheap to build.
+    </p></div>
+</section><section class="deck-light" id="protocol"><div class="shell"><div class="sec-head rv"><span class="label">The protocol</span><h2 class="display h2">Ninety days.<br>Three phases.<br>No guessing.</h2><p class="lede">
+        You don't get a folder of PDFs and a good luck. You get a structured 90-day plan
+        built around your body, your equipment, and your calendar — rebuilt by your coach at
+        every phase transition, with a check-in every single week.
+      </p></div><div class="phases"><article class="phase rv"><div class="phase-n">Phase 01 · Weeks 1–4</div><h3>Foundation</h3><p>Assessment, baseline, and technique. We find out what you can actually do — then build the consistency everything else stands on.</p><ul><li>Movement + capacity baseline</li><li>Technique before load</li><li>Nutrition set from your real intake</li><li>Weekly check-in rhythm locked</li></ul></article><article class="phase rv"><div class="phase-n">Phase 02 · Weeks 5–8</div><h3>Build</h3><p>Progressive load and intensity. Weak points get named and worked. Your plan is rebuilt from what the first four weeks actually showed.</p><ul><li>Progressive overload applied</li><li>Weak points targeted</li><li>Plan rebuilt at week 5</li><li>Milestone check-in</li></ul></article><article class="phase rv"><div class="phase-n">Phase 03 · Weeks 9–12</div><h3>Results</h3><p>Peak phase and reassessment against the numbers you started with. Not a vibe — a measurement, side by side with day one.</p><ul><li>Peak training block</li><li>Plan rebuilt at week 9</li><li>Reassessment vs. baseline</li><li>Next 90 days mapped</li></ul></article></div></div>
+</section><section class="manifesto" id="inside" style="padding-block:var(--step)"><div class="shell"><div class="sec-head rv"><span class="label">What you actually get</span><h2 class="display h2">A coach, not an app.</h2><p class="lede">Software doesn't notice when you go quiet for nine days. A person does.</p></div><div class="includes rv"><div class="inc"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8v8M20 8v8M7 6v12M17 6v12M7 12h10"></path></svg><h3>Custom programming</h3><p>Built for your goals and your setup — a full gym, a garage rack, or a set of dumbbells and bands in a spare bedroom.</p></div><div class="inc"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M3 12h18"></path><circle cx="12" cy="12" r="9"></circle></svg><h3>Nutrition coaching</h3><p>Built from a real three-day baseline of how you actually eat — not a template, not a meal plan you'll abandon by Thursday.</p></div><div class="inc"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m10 9 5 3-5 3z"></path></svg><h3>Weekly check-ins</h3><p>You submit a structured check-in. Your coach films a personal video response. Every week, on a 48-hour clock. You're never guessing.</p></div><div class="inc"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3.5 2"></path></svg><h3>Monthly strategy call</h3><p>Thirty minutes on Zoom, every month, to review the numbers and adjust the plan before small problems become quarter-long ones.</p></div></div></div>
+</section><section class="deck-light" id="tracks"><div class="shell"><div class="sec-head rv"><span class="label">Five training tracks</span><h2 class="display h2">Gym or garage.<br>Same standard.</h2><p class="lede">
+        "I don't have a gym" is not a reason, it's a variable. You get placed on the track that
+        fits your equipment and the number of days you can honestly commit — then it gets
+        personalized from there on your Initial Strategy Call.
+      </p></div><div class="tracks rv"><article class="track"><span class="label">Home</span><span class="track-days">3 days / week</span><span class="track-name">Bands &amp; Dumbbells</span></article><article class="track"><span class="label">Home</span><span class="track-days">5 days / week</span><span class="track-name">Bands &amp; Dumbbells</span></article><article class="track"><span class="label">Home</span><span class="track-days">5 days / week</span><span class="track-name">Dumbbells Only</span></article><article class="track"><span class="label">Full gym</span><span class="track-days">4 days / week</span><span class="track-name">Gym Protocol</span></article><article class="track"><span class="label">Full gym</span><span class="track-days">5 days / week</span><span class="track-name">Gym Protocol</span></article></div></div>
+</section><section class="spot" id="precision"><div class="shell"><div class="sec-head rv"><span class="label">The precision layer</span><h2 class="display h2">Train off your genome.<br>Not a starting template.</h2><p class="lede">
+        Most programs start with a guess and spend twelve weeks correcting it. Precision starts
+        with your actual biology — a genetic panel before day one, and an independent licensed
+        pharmacist in the loop from the beginning.
+      </p></div><div class="spot-grid rv"><div class="spot-card"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 2v1.5c0 4.5 8 6.5 8 11V22M16 2v1.5c0 4.5-8 6.5-8 11V22"></path><path d="M8 2h8M8 22h8M9.2 6.2h5.6M9.2 17.8h5.6"></path></svg><h3>Genetic testing — your entry point</h3><p>
+          Before a single session is written, you complete a genetic panel. It's the difference
+          between a coach guessing how you respond to volume, recover between sessions, and process
+          what you eat — and a coach knowing.
+        </p><ul><li>Panel completed before day one</li><li>Programming built off your results</li><li>Nutrition and recovery calibrated to you</li><li>Results are yours to keep</li></ul></div><div class="spot-card"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6v4l4.2 9.6A2.4 2.4 0 0 1 17 20H7a2.4 2.4 0 0 1-2.2-3.4L9 7z"></path><path d="M6.4 14h11.2"></path></svg><h3>A licensed pharmacist in the loop</h3><p>
+          We partner with an independent licensed pharmacist who reviews your history and panel and,
+          where it is clinically appropriate, prescribes peptides and compounded therapies. Starfighter
+          Fitness does not prescribe and does not dispense — that is their license and their call.
+        </p><ul><li>Independent licensed pharmacist</li><li>Peptides and compounded therapies</li><li>Reviewed against your panel and history</li><li>Coordinated with your training block</li></ul></div></div><p class="spot-fine rv">
+      Genetic testing is performed by a third-party laboratory. Any prescribing decision is made
+      solely by the independent licensed pharmacist, at their discretion, based on your health
+      history and applicable state law — eligibility is never guaranteed, and nothing here is a
+      promise of a specific therapy or outcome.
+    </p></div>
+</section><section class="manifesto" id="fit"><div class="shell"><div class="sec-head rv"><span class="label">Qualification</span><h2 class="display h2">This isn't for everyone.<br>On purpose.</h2></div><div class="fit rv"><div class="fit-col"><h3>Take the call if —</h3><ul><li><span class="tick">[+]</span><span><b>You're 35 to 70 and you can feel the drift.</b> Nothing is wrong yet. That's exactly the window.</span></li><li><span class="tick">[+]</span><span><b>You've done random workouts for years.</b> Effort was never the problem. Structure was.</span></li><li><span class="tick">[+]</span><span><b>You watched someone age badly.</b> A parent, a mentor, a neighbor. And you decided that's not the plan.</span></li><li><span class="tick">[+]</span><span><b>You want to be told the truth weekly.</b> Including the weeks you don't want to hear it.</span></li><li><span class="tick">[+]</span><span><b>You'll give it 90 days.</b> Not 90 days of perfect. 90 days of showing up.</span></li></ul></div><div class="fit-col"><h3>Don't waste the call if —</h3><ul><li><span class="cross">[–]</span><span><b>You want six weeks and a photo.</b> Wrong shop. We're building a fortieth year of function.</span></li><li><span class="cross">[–]</span><span><b>You want a shortcut, a stack, or a hack.</b> This is load, protein, sleep, and repetition.</span></li><li><span class="cross">[–]</span><span><b>You want to be left alone.</b> You'll be checked on. Weekly. That's the entire product.</span></li><li><span class="cross">[–]</span><span><b>You want us to be your doctor.</b> Coaching is nonclinical. Anything clinical goes through the licensed pharmacist or your own physician.</span></li></ul></div></div></div>
+</section><section class="deck-light" id="pricing"><div class="shell"><div class="sec-head rv"><span class="label">Investment</span><h2 class="display h2">Two ways in.<br>One standard.</h2><p class="lede">
+        Same package either way — custom programming, nutrition coaching, weekly check-ins with
+        filmed video responses, and a monthly call. What changes is how much of your biology we get to build from.
+      </p></div><div class="price-grid rv"><div class="price"><div class="price-top"><span class="label">Coaching</span></div><div class="price-fig">$450<small>/ month</small></div><div class="price-alt">or $1,200 paid in full · 3 months</div><p>Delivered by a Starfighter assistant coach, hand-matched to your schedule, goal type, and equipment — trained on the same system, held to the same SLAs.</p><ul><li>Custom 90-day plan across three phases</li><li>Weekly check-in + filmed video response</li><li>Monthly 30-minute Zoom review</li><li>Plan rebuilt at weeks 5 and 9</li><li>Nutrition coaching and ongoing support</li></ul><a class="btn btn-dark" href="#book">Book a strategy call <span class="arrow">→</span></a></div><div class="price feature"><div class="price-top"><span class="label">Precision</span><span class="cap">Genetic + pharmacist-led</span></div><div class="price-fig">$1,500<small>/ month</small></div><div class="price-alt">or $4,000 paid in full · 3 months</div><p>Everything in the coaching tier, built on top of a genetic panel and an independent licensed pharmacist who can prescribe peptides and compounded therapies where it's clinically appropriate.</p><ul><li>Full genetic panel before day one</li><li>Independent licensed pharmacist review</li><li>Peptides and compounded therapies where appropriate</li><li>Programming and nutrition built off your panel</li><li>Two coaching calls a month instead of one</li><li>Everything in the coaching tier</li></ul><a class="btn btn-primary" href="#book">Start with Precision <span class="arrow">→</span></a></div></div><p class="price-note rv"><b>Every enrollment is one full 90-day block.</b> At day 90 you reassess against the baseline you set on
+      day one and choose what's next — renew and run another block, move to a maintenance option, or take
+      what you've built and go. No auto-enrollment into a fourth month you didn't pick. Coaching is
+      delivered remotely to clients in all 50 states.
+    </p></div>
+</section><section class="deck-light" id="faq"><div class="shell"><div class="sec-head rv"><span class="label">Straight answers</span><h2 class="display h2">Questions people<br>actually ask.</h2></div><div class="faq rv"><details><summary>I'm 58 and I haven't trained in a decade. Am I too late?</summary><p>No. Late is the most common starting condition we see, and the gains available in the first ninety days to someone starting from zero are larger than for almost anyone else. What we do adjust is the on-ramp — Phase 01 exists precisely so that technique and consistency get built before load does.</p></details><details><summary>Do I need a gym?</summary><p>No. Three of the five tracks are built for training at home — two on bands and dumbbells, one on dumbbells alone. You'll be placed on the track that matches what you actually own and the number of days you can honestly commit to.</p></details><details><summary>What happens in the first week?</summary><p>You'll complete a PAR-Q and health history, sign an image release, and log three days of food exactly as you normally eat — no adjusting for the audience. Then you'll have your Initial Strategy Call, get placed on a track, and your 90-day plan gets built around what came out of that conversation. On Precision, your genetic panel is completed in that same window and the plan is built off the results.</p></details><details><summary>Who actually coaches me?</summary><p>A Starfighter coach, matched to your schedule, your goals, and the equipment you actually have. Every coach works from the same programming library, is trained on the same system, and is held to the same response times — so the standard doesn't change based on who picks up your file.</p></details><details><summary>What does the genetic panel actually tell you?</summary><p>It gives your coach a real starting point instead of a template — how you tend to respond to training volume, how quickly you recover between hard sessions, and how you process what you eat. It informs your programming, your nutrition targets, and your recovery structure from day one rather than after eight weeks of trial and error. The results belong to you.</p></details><details><summary>Who prescribes the peptides?</summary><p>An independent licensed pharmacist we partner with — not us. They review your health history and your panel and make every prescribing decision themselves, at their discretion and under their license. Eligibility depends on your history and your state's law, and it is never guaranteed. Starfighter Fitness neither prescribes nor dispenses anything.</p></details><details><summary>Is the coaching itself medical care?</summary><p>No. The coaching side of Starfighter Fitness is nonclinical fitness and nutrition coaching — we don't diagnose, treat, or prescribe, and we don't replace your physician. Anything clinical runs through the licensed pharmacist or your own doctor, and we'll tell you plainly when something belongs there.</p></details><details><summary>What happens at day 90?</summary><p>A reassessment against the baseline you set on day one, and a real conversation: renew at the standard rate and run another block, move to a maintenance option, or take what you've built and go. There's no auto-enrollment into a fourth month you didn't choose.</p></details><details><summary>I don't live near you. Does that matter?</summary><p>Not at all. Coaching is delivered remotely nationwide — programming and check-ins through the app, calls over Zoom. Clients in all 50 states are on the same system.</p></details></div></div>
+</section><section class="book" id="book"><div class="shell"><div class="book-grid"><div class="rv"><span class="label" style="color:#FF6B75">Next step</span><h2 class="display h2" style="margin:1.35rem 0 1.75rem;color:var(--chalk);font-size:clamp(2rem,3.6vw,3.1rem)">
+          Ninety days from now<br>you'll be ninety days older.<br>The only variable is <em>stronger.</em></h2><p class="lede">
+          It starts with one call. Forty-five minutes, no pressure, no pitch deck — we define what you
+          want to be able to do at 90, work backward, and tell you honestly whether we're the right
+          people to build it with you.
+        </p><div class="hero-actions"><a class="btn btn-primary" href="https://api.leadconnectorhq.com/widget/booking/ApCcJlv1Fh1GuwU7Xi6a" target="_blank" rel="noopener noreferrer">Book your strategy call <span class="arrow">→</span></a></div><p class="lede" style="margin-top:1.25rem">Rather talk now? Call <a href="tel:+19285498006" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:underline">(928) 549-8006</a>.</p></div><div class="book-cal rv"><iframe src="https://api.leadconnectorhq.com/widget/booking/ApCcJlv1Fh1GuwU7Xi6a" title="Book your Starfighter Fitness strategy call" allow="payment" style="width:100%;border:none;overflow:hidden" scrolling="no" id="ApCcJlv1Fh1GuwU7Xi6a_1789262852145"></iframe></div></div></div>
+</section><footer><div class="shell"><div class="foot-grid"><div><a class="brand" href="#top" style="text-decoration:none"><svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="1" y="1" width="30" height="30" fill="none" stroke="rgba(255,255,255,.22)"></rect><path d="M5 25 C11 25 12 13 19 10.5 C21 9.8 22.6 9.2 24 8.8" fill="none" stroke="#FF6B75" stroke-width="2.4" stroke-linecap="round"></path><path d="M25 4 l1.1 2.9 2.9 1.1 -2.9 1.1 -1.1 2.9 -1.1 -2.9 -2.9 -1.1 2.9 -1.1z" fill="#E63946"></path></svg><span class="brand-txt">Starfighter<span>Fitness</span></span></a><p>Online longevity coaching, delivered nationwide. We train people to be functional, strong, and independent into their hundreds — starting with the next ninety days.</p></div><div class="foot-col"><h4>The program</h4><ul><li><a href="#gap">The healthspan gap</a></li><li><a href="#protocol">The 90-day protocol</a></li><li><a href="#tracks">Training tracks</a></li><li><a href="#precision">The precision layer</a></li><li><a href="#pricing">Pricing</a></li></ul></div><div class="foot-col"><h4>Get started</h4><ul><li><a href="#book">Book a strategy call</a></li><li><a href="#faq">Questions</a></li><li><a href="tel:+19285498006" target="_blank" rel="noopener noreferrer">(928) 549-8006</a></li><li><a href="mailto:info@starfighterfitness.com" target="_blank" rel="noopener noreferrer">info@starfighterfitness.com</a></li></ul></div></div><p class="disclaimer">
+      Starfighter Fitness provides nonclinical fitness and nutrition coaching. Nothing on this page
+      is medical advice, diagnosis, or treatment, and no individual result is promised. Consult a
+      physician before beginning any exercise or nutrition program. Genetic testing is performed by
+      an independent third-party laboratory. Peptides and compounded therapies are prescribed solely
+      by an independent licensed pharmacist at their own discretion, subject to your health history
+      and applicable state law; Starfighter Fitness does not prescribe, dispense, or guarantee
+      eligibility for any therapy. Figures cited: the 12.4-year
+      healthspan–lifespan gap in the United States is from Garmany &amp; Terzic, <em>JAMA Network
+      Open</em> (2024); U.S. life expectancy figures are from the CDC National Center for Health
+      Statistics. Charts on this page are illustrative representations of population-level
+      trajectories, not projections of any individual outcome.
+    </p><div class="foot-bar label"><span>© 2026 Starfighter Fitness LLC</span><span>A Starfighter Industries company</span><span>Coaching all 50 states</span></div></div>
+</footer><script>
+(function(){
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var targets = document.querySelectorAll('.rv');
+  if(reduce || !('IntersectionObserver' in window)){
+    targets.forEach(function(el){ el.classList.add('in-view'); });
+    return;
+  }
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){ e.target.classList.add('in-view'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.14, rootMargin: '0px 0px -8% 0px' });
+  targets.forEach(function(el){ io.observe(el); });
+})();
+</script><script>
+(function(){
+  if (window.parent === window) return;
+  var last = 0;
+  function send(){
+    /* a zero-width layout produces a meaningless height — wait for a real one */
+    if (!document.documentElement.clientWidth) return;
+    var h = Math.max(document.documentElement.scrollHeight,
+                     document.body ? document.body.scrollHeight : 0);
+    if (h && Math.abs(h - last) > 1){
+      last = h;
+      try { parent.postMessage({ __sfEmbed:'height', height:h }, '*'); } catch(e){}
+    }
+  }
+  if (window.ResizeObserver){
+    var ro = new ResizeObserver(send);
+    ro.observe(document.documentElement);
+    if (document.body) ro.observe(document.body);
+  }
+  window.addEventListener('load', send);
+  window.addEventListener('resize', send);
+  /* The parent asks for a fresh measurement once it knows it has a real
+     width — e.g. after a hidden tab or accordion reveals the embed, where
+     every automatic measurement so far was taken at zero width. */
+  window.addEventListener('message', function(e){
+    if (e.data && e.data.__sfEmbed === 'measure'){ last = 0; send(); }
+  }, false);
+  [50,250,600,1200,2500].forEach(function(t){ setTimeout(send, t); });
+  send();
+  document.addEventListener('click', function(ev){
+    var a = ev.target.closest && ev.target.closest('a[href^="#"]');
+    if (!a) return;
+    var id = a.getAttribute('href').slice(1);
+    if (!id) return;
+    var el = document.getElementById(id);
+    if (!el) return;
+    ev.preventDefault();
+    var y = el.getBoundingClientRect().top + (window.pageYOffset || 0);
+    try { parent.postMessage({ __sfEmbed:'scrollTo', offset:y }, '*'); } catch(e){}
+  }, false);
+})();
+</script>
+<script src="https://link.msgsndr.com/js/form_embed.js" type="text/javascript"></script>
+</body>
+</html>
